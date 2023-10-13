@@ -3,7 +3,7 @@ name: TON Tact Challenge
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
