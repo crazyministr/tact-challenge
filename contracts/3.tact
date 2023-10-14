@@ -84,6 +84,13 @@ contract Task3 with Deployable {
     self.decimal = 1000000000;
   }
 
+  fun calc_price(to: Int, from: Int): Int {
+    if (from == 0) {
+        return 0;
+    }
+    return to * self.decimal / from;
+  }
+
   receive(msg: TokenNotification) {
     let jettonWallet: Address = sender();
     if (jettonWallet != self.jAddressA && jettonWallet != self.jAddressB) {
@@ -109,8 +116,8 @@ contract Task3 with Deployable {
       tt = self.bAmount;
       ttAddr = self.jAddressB;
     }
-    let price: Int = mydiv(tt, tf, self.decimal);  // tt * self.decimal / tf
-    let needToSend: Int = price * msg.amount;
+    let price: Int = self.calc_price(tt, tf);
+    let needToSend: Int = price * msg.amount / self.decimal;
     if (needToSend > tt || needToSend == 0) {
       // return tokens back
       transferJettons(
@@ -134,15 +141,12 @@ contract Task3 with Deployable {
 
   get fun price(token: Address): Int {
     if (token == self.jAddressA) {
-      if (self.bAmount == 0) {
-        return 0;
-      }
-      return mydiv(self.aAmount, self.bAmount, self.decimal);
+      return self.calc_price(self.bAmount, self.aAmount);
     }
-    return mydiv(self.bAmount, self.aAmount, self.decimal);
+    return self.calc_price(self.aAmount, self.bAmount);
   }
 
-  get fun balance(token: Address): Int { 
+  get fun balance(token: Address): Int {
     if (token == self.jAddressA) {
       return self.aAmount;
     }
