@@ -103,13 +103,13 @@ contract Task5 with Deployable {
     }
     let msgValue: Int = context().value;
     if (msgValue < ton("2.1")) {
-      if (msgValue >= ton("0.1")) {
-        // nativeReserve(myBalance() - context().value, 0);
+      // if (msgValue >= ton("0.1")) {
+        nativeReserve(myBalance() - context().value, 0);
         self.send_nft(nftAddress, prevOwner, msg.queryId, 128);
-      } else {
-        self.nftCollection.set(self.nftCnt, nftAddress);
-        self.nftCnt = self.nftCnt + 1;
-      }
+      // } else {
+      //   self.nftCollection.set(self.nftCnt, nftAddress);
+      //   self.nftCnt = self.nftCnt + 1;
+      // }
       return;
     }
 
@@ -129,14 +129,14 @@ contract Task5 with Deployable {
 
   receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
-    // nativeReserve(self.MinTonForStorage, 0);
+    nativeReserve(self.MinTonForStorage, 0);
     send(SendParameters{
       to: self.owner,
-      bounce: true,
-      value: myBalance() - context().value - self.MinTonForStorage,
-      mode: SendRemainingValue + SendIgnoreErrors,
-      // value: 0,
-      // mode: SendRemainingBalance,
+      // bounce: true,
+      // value: myBalance() - context().value - self.MinTonForStorage,
+      // mode: SendRemainingValue + SendIgnoreErrors,
+      value: 0,
+      mode: SendRemainingBalance,
       body: AdminFetchProfit{
         queryId: msg.queryId
       }.toCell()
@@ -145,7 +145,8 @@ contract Task5 with Deployable {
 
   receive(msg: AdminWithdrawalAllNFTs) {
     let minTons: Int = 1000000000 + self.nftCnt * 80000000;
-    require(context().value >= minTons, "Insufficent funds");
+    require(myBalance() >= minTons, "Insufficent funds");
+    // require(context().value >= minTons, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
 
     let it: Int = 0;
