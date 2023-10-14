@@ -61,6 +61,9 @@ contract Task3 with Deployable {
   }
 
   fun div(a: Int, b: Int, d: Int): Int {
+    if (b == 0) {
+      return 0;
+    }
     return a * d / (b * d);
   }
 
@@ -91,7 +94,7 @@ contract Task3 with Deployable {
     }
     let price: Int = self.div(tt, tf, self.decimal);  // tt * self.decimal / tf
     let needToSend: Int = price * msg.amount;
-    if (needToSend > tt) {
+    if (needToSend > tt || needToSend == 0) {
       // return tokens back
       self.transferJettons(
         jettonWallet,
@@ -105,15 +108,11 @@ contract Task3 with Deployable {
     // swap
     if (jettonWallet == self.jettonAddressA) {
       self.bAmount = self.bAmount - needToSend;
+      self.transferJettons(self.jettonAddressB, msg.from, needToSend, msg.queryId);
     } else {
       self.aAmount = self.aAmount - needToSend;
+      self.transferJettons(self.jettonAddressA, msg.from, needToSend, msg.queryId);
     }
-    self.transferJettons(
-      jettonWallet,  // FIXME: calc jettonWallet transfer to
-      msg.from,
-      needToSend,
-      msg.queryId
-    );
   }
 
   fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int) {
