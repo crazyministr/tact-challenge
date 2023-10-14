@@ -76,7 +76,7 @@ contract Task4 with Deployable {
       });
       return;
     }
-    self.time = msg.forwardPayload.loadUint(32);
+    self.time = now() + msg.forwardPayload.loadUint(32);
     self.owner = msg.prevOwner;
     self.nft_address = sender();
   }
@@ -93,6 +93,7 @@ contract Task4 with Deployable {
       });
       return;
     }
+    require(self.nft_address == msg.nftAddress, "Invalid nftAddress");
     send(SendParameters{
       to: self.nft_address!!,
       value: 0,
