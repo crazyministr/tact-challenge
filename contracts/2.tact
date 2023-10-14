@@ -37,7 +37,7 @@ contract Task2 with Deployable {
     send(SendParameters{
       to: self.admin,
       value: 0,
-      mode: SendRemainingBalance,
+      mode: SendRemainingValue,
       body: beginCell().storeAddress(sender()).storeRef(
         beginCell().storeSlice(msg).endCell()
       ).endCell()
