@@ -64,7 +64,7 @@ contract Task4 with Deployable {
       send(SendParameters{
         to: sender(),
         value: 0,
-        mode: SendRemainingValue,
+        mode: SendRemainingValue + SendIgnoreErrors,
         body: Transfer{
           queryId: msg.queryId,
           newOwner: msg.prevOwner,
@@ -87,7 +87,8 @@ contract Task4 with Deployable {
       send(SendParameters{
           to: sender(),
           value: 0,
-          mode: SendRemainingValue,
+          mode: SendRemainingValue + SendIgnoreErrors,
+          bounce: true,
           body: "NFT is still locked".asComment()
       });
       return;
@@ -98,7 +99,7 @@ contract Task4 with Deployable {
     send(SendParameters{
       to: msg.nftAddress,
       value: 0,
-      mode: SendRemainingBalance,
+      mode: SendRemainingBalance + SendIgnoreErrors,
       body: Transfer{
         queryId: msg.queryId,
         newOwner: sender(),
