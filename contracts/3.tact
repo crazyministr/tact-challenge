@@ -43,9 +43,6 @@ message(0xf8a7ea5) JettonTransfer {
     forwardPayload: Slice as remaining;
 }
 
-@name(muldiv)
-native mulDiv(a: Int, b: Int, c: Int): Int;
-
 contract Task3 with Deployable {
   owner: Address;
   aAmount: Int;
@@ -61,6 +58,10 @@ contract Task3 with Deployable {
     self.aAmount = 0;
     self.bAmount = 0;
     self.decimal = 1000000000;
+  }
+
+  fun div(a: Int, b: Int, d: Int): Int {
+    return a * d / (b * d);
   }
 
   receive(msg: JettonNotification) {
@@ -88,7 +89,7 @@ contract Task3 with Deployable {
       tt = self.bAmount;
       ttAddr = self.jettonAddressB;
     }
-    let price: Int = mulDiv(tt, self.decimal, tf);  // tt * self.decimal / tf
+    let price: Int = self.div(tt, tf, self.decimal);  // tt * self.decimal / tf
     let needToSend: Int = price * msg.amount;
     if (needToSend > tt) {
       // return tokens back
@@ -137,11 +138,11 @@ contract Task3 with Deployable {
       if (self.bAmount == 0) {
         return 0;
       }
-      return mulDiv(self.aAmount, self.decimal, self.bAmount);
+      return self.div(self.aAmount, self.bAmount, self.decimal);
     }
-    return mulDiv(self.bAmount, self.decimal, self.aAmount);
+    return self.div(self.bAmount, self.aAmount, self.decimal);
   }
-  
+
   get fun balance(jetton: Address): Int {
     if (jetton == self.jettonAddressA) {
       return self.aAmount;
