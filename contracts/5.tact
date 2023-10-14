@@ -20,6 +20,7 @@ import "@stdlib/deploy";
    - SC should check that incoming tx TON value is enough for NFT withdrawal. Specifically, at least: (1 + totalNftsHeld * 0.08) TONs. Otherwise throw "Insufficent funds"
    - SC should check that sender is the admin, throw "Invalid sender" otherwise
    - If all checks pass, SC should send NFTs one by one to the admin 
+   - SC should be able to withdraw all NFTs by a single message from admin
   * OwnershipAssigned 
    - if prevOwner is the owner's (admin) address, then add NFT to the collection
    - if value of TON attached is less then 2.1 TON then stop execution and return NFT back,
@@ -145,26 +146,24 @@ contract Task5 with Deployable {
 
   receive(msg: AdminWithdrawalAllNFTs) {
     let n008: Int = ton("0.08");
-    let minTons: Int = 1000000000 + self.nftCnt * n008;
-    // require(myBalance() >= minTons, "Insufficent funds");
-    require(context().value >= minTons, "Insufficent funds");
+    let minTons: Int = ton("1") + self.nftCnt * n008;
+    require(context().value >= minTons, "Insufficient funds");
     require(sender() == self.owner, "Invalid sender");
 
-    return;
-    // let it: Int = 0;
-    // repeat (self.nftCnt) {
-    //   let nftAddress: Address = self.nftCollection.get(it)!!;
-    //   let mode: Int = 0;
-    //   let amount: Int = n008;
-    //   if (it == self.nftCnt - 1) {
-    //     mode = 64;
-    //     amount = 0;
-    //   }
-    //   self.send_nft(nftAddress, self.owner, msg.queryId, amount, mode);
-    //   it = it + 1;
-    // }
-    // self.nftCollection = emptyMap();
-    // self.nftCnt = 0;
+    let it: Int = 0;
+    repeat (self.nftCnt) {
+      let nftAddress: Address = self.nftCollection.get(it)!!;
+      let mode: Int = 0;
+      let amount: Int = n008;
+      if (it == self.nftCnt - 1) {
+        mode = 64;
+        amount = 0;
+      }
+      self.send_nft(nftAddress, self.owner, msg.queryId, amount, mode);
+      it = it + 1;
+    }
+    self.nftCollection = emptyMap();
+    self.nftCnt = 0;
   }
 
   get fun profit(): Int {
