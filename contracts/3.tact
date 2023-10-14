@@ -33,7 +33,8 @@ message(0x7362d09c) TokenNotification {
     forwardPayload: Slice as remaining;
 }
 
-message(0xf8a7ea5) TokenTransfer {
+// message(0xf8a7ea5) TokenTransfer {
+message(0x178d4519) TokenTransfer {
     queryId: Int as uint64;
     amount: Int as coins;
     destination: Address;
@@ -90,6 +91,7 @@ contract Task3 with Deployable {
     if (jettonWallet != self.jAddressA && jettonWallet != self.jAddressB) {
       throw(100);
     }
+
     if (self.owner == msg.from) {
       if (jettonWallet == self.jAddressA) {
         self.aAmount = self.aAmount + msg.amount;
@@ -99,19 +101,17 @@ contract Task3 with Deployable {
       return;
     }
 
-    let tf: Int = self.bAmount;
-    let tt: Int = self.aAmount;
-    // let tfAddr: Address = self.jAddressB;
-    // let ttAddr: Address = self.jAddressA;
+    let swapFrom: Int = self.bAmount;
+    let swapTo: Int = self.aAmount;
     if (jettonWallet == self.jAddressA) {
-      tf = self.aAmount;
-      tt = self.bAmount;
-      // tfAddr = self.jAddressA;
-      // ttAddr = self.jAddressB;
+      swapFrom = self.aAmount;
+      swapTo = self.bAmount;
     }
-    let price: Int = self.calc_price(tt, tf);
+
+    let price: Int = self.calc_price(swapTo, swapFrom);
     let needToSend: Int = price * msg.amount / self.decimal;
-    if (needToSend > tt || needToSend == 0) {
+
+    if (needToSend > swapTo || needToSend == 0) {
       // return tokens back
       transferJettons(
         jettonWallet,
