@@ -43,29 +43,29 @@ message(0xf8a7ea5) JettonTransfer {
     forwardPayload: Slice as remaining;
 }
 
-fun mydiv(a: Int, b: Int, d: Int): Int {
-  if (b == 0) {
-    return 0;
-  }
-  return a * d / (b * d);
-}
+// fun mydiv(a: Int, b: Int, d: Int): Int {
+//   if (b == 0) {
+//     return 0;
+//   }
+//   return a * d / (b * d);
+// }
 
-fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int) {
-    send(SendParameters{
-        to: jettonWallet,
-        value: 0,
-        mode: SendRemainingValue,
-        body: JettonTransfer{
-          queryId: queryId,
-          amount: amount,
-          destination: destination,
-          responseDestination: destination,
-          customPayload: null,
-          forwardTonAmount: ton("0.0001"),
-          forwardPayload: emptySlice()
-        }.toCell()
-    });
-}
+// fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int) {
+//     send(SendParameters{
+//         to: jettonWallet,
+//         value: 0,
+//         mode: SendRemainingValue,
+//         body: JettonTransfer{
+//           queryId: queryId,
+//           amount: amount,
+//           destination: destination,
+//           responseDestination: destination,
+//           customPayload: null,
+//           forwardTonAmount: ton("0.0001"),
+//           forwardPayload: emptySlice()
+//         }.toCell()
+//     });
+// }
 
 
 contract Task3 with Deployable {
@@ -86,6 +86,7 @@ contract Task3 with Deployable {
   }
 
   receive(msg: JettonNotification) {
+    /*
     let jettonWallet: Address = sender();
     if (jettonWallet != self.jettonAddressA && jettonWallet != self.jettonAddressB) {
       throw(100);
@@ -131,9 +132,11 @@ contract Task3 with Deployable {
       self.aAmount = self.aAmount - needToSend;
       transferJettons(self.jettonAddressA, msg.from, needToSend, msg.queryId);
     }
+    */
   } 
 
   get fun price(jetton: Address): Int { 
+    /*
     if (jetton == self.jettonAddressA) {
       if (self.bAmount == 0) {
         return 0;
@@ -141,13 +144,16 @@ contract Task3 with Deployable {
       return mydiv(self.aAmount, self.bAmount, self.decimal);
     }
     return mydiv(self.bAmount, self.aAmount, self.decimal);
+    */
   }
   
   get fun balance(jetton: Address): Int { 
+    /*
     if (jetton == self.jettonAddressA) {
       return self.aAmount;
     }
     return self.bAmount;
+    */
   }
 }
 
