@@ -51,7 +51,7 @@ contract Task4 with Deployable {
   time: Int as uint32;
   owner: Address?;
   nft_address: Address?;
-  
+
   init(seed: Int) {
     self.seed = seed;
     self.time = 0;
@@ -83,6 +83,7 @@ contract Task4 with Deployable {
 
   receive(msg: NftWithdrawal) {
     require(sender() == self.owner, "Invalid sender");
+
     if (self.time < now()) {
       send(SendParameters{
           to: sender(),
@@ -93,8 +94,10 @@ contract Task4 with Deployable {
       });
       return;
     }
+
     require(self.nft_address == msg.nftAddress, "Invalid nftAddress");
-    // self.owner = null;
+
+    self.owner = null;
     self.nft_address = null;
     send(SendParameters{
       to: msg.nftAddress,
@@ -112,7 +115,7 @@ contract Task4 with Deployable {
   }
 
   get fun time(): Int {
-    return now() - self.time;
+    return self.time - now();
   }
 
   get fun nft(): Address? {
