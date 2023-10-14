@@ -68,7 +68,7 @@ contract Task4 with Deployable {
         body: Transfer{
           queryId: msg.queryId,
           newOwner: msg.prevOwner,
-          responseDestination: myAddress(),
+          responseDestination: msg.prevOwner,
           customPayload: null,
           forwardAmount: 0,
           forwardPayload: emptySlice()
@@ -82,7 +82,6 @@ contract Task4 with Deployable {
   }
 
   receive(msg: NftWithdrawal) {
-    let sender: Address? = null;
     require(sender() == self.owner, "Invalid sender");
     if (self.time < now()) {
       // self.reply("NFT is still locked".asComment());
@@ -97,11 +96,11 @@ contract Task4 with Deployable {
     send(SendParameters{
       to: self.nft_address!!,
       value: 0,
-      mode: SendRemainingBalance,
+      mode: SendRemainingBalance + SendIgnoreErrors,
       body: Transfer{
         queryId: msg.queryId,
         newOwner: self.owner!!,
-        responseDestination: myAddress(),
+        responseDestination: self.owner!!,
         customPayload: null,
         forwardAmount: 0,
         forwardPayload: emptySlice()
