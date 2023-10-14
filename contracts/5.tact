@@ -76,12 +76,12 @@ contract Task5 with Deployable {
     self.nftCollection = emptyMap();
   }
 
-  fun send_nft(nftAddress: Address, toAddress: Address) {
+  fun send_nft(nftAddress: Address, toAddress: Address, mode: Int) {
     send(SendParameters{
       to: nftAddress,
       bounce: true,
       value: 0,
-      mode: SendRemainingValue + SendIgnoreErrors,
+      mode: mode,
       body: Transfer{
         queryId: 13,
         newOwner: toAddress,
@@ -105,7 +105,7 @@ contract Task5 with Deployable {
     if (msgValue < ton("2.1")) {
       nativeReserve(myBalance(), 0);
       // TODO: check if enouth TONs to send NFT back
-      self.send_nft(nftAddress, prevOwner);
+      self.send_nft(nftAddress, prevOwner, 64);
       return;
     }
 
@@ -121,7 +121,7 @@ contract Task5 with Deployable {
     }
 
     nativeReserve(myBalance() + ton("2"), 0);
-    self.send_nft(nftAddress, prevOwner);
+    self.send_nft(nftAddress, prevOwner, 64 + 2);  // ignore erros
   }
 
   receive(msg: AdminWithdrawalProfit) {
@@ -148,7 +148,7 @@ contract Task5 with Deployable {
     let it: Int = 0;
     repeat (self.nftCnt) {
       let nftAddress: Address = self.nftCollection.get(it)!!;
-      self.send_nft(nftAddress, self.owner);
+      self.send_nft(nftAddress, self.owner, 3);
       it = it + 1;
     }
     self.nftCollection = emptyMap();
