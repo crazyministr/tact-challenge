@@ -43,13 +43,6 @@ message(0xf8a7ea5) TokenTransfer {
     forwardPayload: Slice as remaining;
 }
 
-fun mydiv(a: Int, b: Int, d: Int): Int {
-  if (b == 0) {
-    return 0;
-  }
-  return a * d / (b * d);
-}
-
 fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int) {
     send(SendParameters{
         to: jettonWallet,
@@ -116,7 +109,7 @@ contract Task3 with Deployable {
       tt = self.bAmount;
       ttAddr = self.jAddressB;
     }
-    let price: Int = self.calc_price(tt, tf);
+    let price: Int = self.calc_price(tf, tt);
     let needToSend: Int = price * msg.amount / self.decimal;
     if (needToSend > tt || needToSend == 0) {
       // return tokens back
