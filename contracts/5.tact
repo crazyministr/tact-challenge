@@ -36,7 +36,7 @@ import "@stdlib/deploy";
      the order of NFTs in this dictionary doesn't matter
 */
 
-message AdminWithdrawalFees {
+message AdminWithdrawalProfit {
   queryId: Int as uint64;
 }
 
@@ -44,7 +44,7 @@ message AdminWithdrawalAllNFTs {
   queryId: Int as uint64;
 }
 
-message AdminFetchFees {
+message AdminFetchProfit {
   queryId: Int as uint64;
 }
 
@@ -124,14 +124,14 @@ contract Task5 with Deployable {
     self.send_nft(nftAddress, prevOwner);
   }
 
-  receive(msg: AdminWithdrawalFees) {
+  receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
     send(SendParameters{
       to: self.owner,
       bounce: true,
       value: myBalance() - context().value - self.MinTonForStorage,
       mode: SendRemainingValue + SendIgnoreErrors,
-      body: AdminFetchFees{
+      body: AdminFetchProfit{
         queryId: msg.queryId
       }.toCell()
     });
