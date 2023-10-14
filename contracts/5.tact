@@ -104,8 +104,7 @@ contract Task5 with Deployable {
     let msgValue: Int = context().value;
     if (msgValue < ton("2.1")) {
       // nativeReserve(myBalance(), 0);
-      // TODO: check if enough TONs to send NFT back
-      if (msgValue >= ton("0.1")) {
+      if (msgValue >= ton("0.08")) {
         self.send_nft(nftAddress, prevOwner, msg.queryId, 64);
       }
       return;
