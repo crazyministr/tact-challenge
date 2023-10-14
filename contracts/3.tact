@@ -26,14 +26,14 @@ import "@stdlib/deploy";
   To be exact: any jettons (A or B) received from the admin are "added". Admin can't swap.
 */
 
-message(0x7362d09c) JettonNotification {
+message(0x7362d09c) TokenNotification {
     queryId: Int as uint64;
     amount: Int as coins;
     from: Address;
     forwardPayload: Slice as remaining;
 }
 
-message(0xf8a7ea5) JettonTransfer {
+message(0xf8a7ea5) TokenTransfer {
     queryId: Int as uint64;
     amount: Int as coins;
     destination: Address;
@@ -45,29 +45,29 @@ message(0xf8a7ea5) JettonTransfer {
 
 contract Task3 with Deployable {
   owner: Address;
-  aAmount: Int;
-  bAmount: Int;
-  jettonAddressA: Address;
-  jettonAddressB: Address;
+  a: Int;
+  b: Int;
+  jAddressA: Address;
+  jAddressB: Address;
   decimal: Int;
 
-  init(admin: Address, newJettonAddressA: Address, newJettonAddressB: Address) {
+  init(admin: Address, newJAddressA: Address, newJAddressB: Address) {
     self.owner = admin;
-    self.jettonAddressA = newJettonAddressA;
-    self.jettonAddressB = newJettonAddressB;
-    self.aAmount = 0;
-    self.bAmount = 0;
+    self.jAddressA = newJAddressA;
+    self.jAddressB = newJAddressB;
+    self.a = 0;
+    self.b = 0;
     self.decimal = 1000000000;
   }
 
-  receive(msg: JettonNotification) {
+  receive(msg: TokenNotification) {
   } 
-  
-  get fun price(jetton: Address): Int { 
+
+  get fun price(token: Address): Int {
     return 0;
   }
-  
-  get fun balance(jetton: Address): Int { 
+
+  get fun balance(token: Address): Int { 
     return 0;
   }
 }
