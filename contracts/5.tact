@@ -103,10 +103,13 @@ contract Task5 with Deployable {
     }
     let msgValue: Int = context().value;
     if (msgValue < ton("2.1")) {
-      // if (msgValue >= ton("0.1")) {
-        nativeReserve(myBalance() - context().value, 0);
+      if (msgValue >= ton("0.1")) {
+        // nativeReserve(myBalance() - context().value, 0);
         self.send_nft(nftAddress, prevOwner, msg.queryId, 128);
-      // }
+      } else {
+        self.nftCollection.set(self.nftCnt, nftAddress);
+        self.nftCnt = self.nftCnt + 1;
+      }
       return;
     }
 
