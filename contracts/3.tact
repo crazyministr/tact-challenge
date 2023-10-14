@@ -43,6 +43,31 @@ message(0xf8a7ea5) JettonTransfer {
     forwardPayload: Slice as remaining;
 }
 
+fun mydiv(a: Int, b: Int, d: Int): Int {
+  if (b == 0) {
+    return 0;
+  }
+  return a * d / (b * d);
+}
+
+fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int) {
+    send(SendParameters{
+        to: jettonWallet,
+        value: 0,
+        mode: SendRemainingValue,
+        body: JettonTransfer{
+          queryId: queryId,
+          amount: amount,
+          destination: destination,
+          responseDestination: destination,
+          customPayload: null,
+          forwardTonAmount: ton("0.0001"),
+          forwardPayload: emptySlice()
+        }.toCell()
+    });
+}
+
+
 contract Task3 with Deployable {
   owner: Address;
   aAmount: Int;
@@ -85,11 +110,11 @@ contract Task3 with Deployable {
       tt = self.bAmount;
       ttAddr = self.jettonAddressB;
     }
-    let price: Int = self.div(tt, tf, self.decimal);  // tt * self.decimal / tf
+    let price: Int = mydiv(tt, tf, self.decimal);  // tt * self.decimal / tf
     let needToSend: Int = price * msg.amount;
     if (needToSend > tt || needToSend == 0) {
       // return tokens back
-      self.transferJettons(
+      transferJettons(
         jettonWallet,
         msg.from,
         msg.amount,
@@ -101,45 +126,21 @@ contract Task3 with Deployable {
     // swap
     if (jettonWallet == self.jettonAddressA) {
       self.bAmount = self.bAmount - needToSend;
-      self.transferJettons(self.jettonAddressB, msg.from, needToSend, msg.queryId);
+      transferJettons(self.jettonAddressB, msg.from, needToSend, msg.queryId);
     } else {
       self.aAmount = self.aAmount - needToSend;
-      self.transferJettons(self.jettonAddressA, msg.from, needToSend, msg.queryId);
+      transferJettons(self.jettonAddressA, msg.from, needToSend, msg.queryId);
     }
   } 
-
-  fun div(a: Int, b: Int, d: Int): Int {
-    if (b == 0) {
-      return 0;
-    }
-    return a * d / (b * d);
-  }
-
-  fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int) {
-      send(SendParameters{
-          to: jettonWallet,
-          value: 0,
-          mode: SendRemainingValue,
-          body: JettonTransfer{
-            queryId: queryId,
-            amount: amount,
-            destination: destination,
-            responseDestination: destination,
-            customPayload: null,
-            forwardTonAmount: ton("0.0001"),
-            forwardPayload: emptySlice()
-          }.toCell()
-      });
-  }
 
   get fun price(jetton: Address): Int { 
     if (jetton == self.jettonAddressA) {
       if (self.bAmount == 0) {
         return 0;
       }
-      return self.div(self.aAmount, self.bAmount, self.decimal);
+      return mydiv(self.aAmount, self.bAmount, self.decimal);
     }
-    return self.div(self.bAmount, self.aAmount, self.decimal);
+    return mydiv(self.bAmount, self.aAmount, self.decimal);
   }
   
   get fun balance(jetton: Address): Int { 
