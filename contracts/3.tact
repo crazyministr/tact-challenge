@@ -109,7 +109,7 @@ contract Task3 with Deployable {
       tt = self.bAmount;
       ttAddr = self.jAddressB;
     }
-    let price: Int = self.calc_price(tf, tt);
+    let price: Int = self.calc_price(tt, tf);
     let needToSend: Int = price * msg.amount / self.decimal;
     if (needToSend > tt || needToSend == 0) {
       // return tokens back
@@ -124,9 +124,11 @@ contract Task3 with Deployable {
 
     // swap
     if (jettonWallet == self.jAddressA) {
+      self.aAmount = self.aAmount + msg.amount;
       self.bAmount = self.bAmount - needToSend;
       transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId);
     } else {
+      self.bAmount = self.bAmount + msg.amount;
       self.aAmount = self.aAmount - needToSend;
       transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId);
     }
