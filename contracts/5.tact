@@ -126,14 +126,14 @@ contract Task5 with Deployable {
 
   receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
-    nativeReserve(self.MinTonForStorage, 0);
+    // nativeReserve(self.MinTonForStorage, 0);
     send(SendParameters{
       to: self.owner,
       bounce: true,
-      // value: myBalance() - context().value - self.MinTonForStorage,
-      value: 0,
-      // mode: SendRemainingValue + SendIgnoreErrors,
-      mode: SendRemainingBalance,
+      value: myBalance() - context().value - self.MinTonForStorage,
+      mode: SendRemainingValue + SendIgnoreErrors,
+      // value: 0,
+      // mode: SendRemainingBalance,
       body: AdminFetchProfit{
         queryId: msg.queryId
       }.toCell()
@@ -148,7 +148,7 @@ contract Task5 with Deployable {
     let it: Int = 0;
     repeat (self.nftCnt) {
       let nftAddress: Address = self.nftCollection.get(it)!!;
-      let mode: Int = 2;
+      let mode: Int = 0;
       if (it == self.nftCnt - 1) {
         mode = 64;
       }
