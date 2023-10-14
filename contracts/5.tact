@@ -76,11 +76,11 @@ contract Task5 with Deployable {
     self.nftCollection = emptyMap();
   }
 
-  fun send_nft(nftAddress: Address, toAddress: Address, queryId: Int, mode: Int) {
+  fun send_nft(nftAddress: Address, toAddress: Address, queryId: Int, amount: Int, mode: Int) {
     send(SendParameters{
       to: nftAddress,
       bounce: true,
-      value: 0,
+      value: amount,
       mode: mode,
       body: Transfer{
         queryId: queryId,
@@ -105,7 +105,7 @@ contract Task5 with Deployable {
     if (msgValue < ton("2.1")) {
       // if (msgValue >= ton("0.1")) {
         nativeReserve(myBalance() - context().value, 0);
-        self.send_nft(nftAddress, prevOwner, msg.queryId, 128);
+        self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
       // } else {
       //   self.nftCollection.set(self.nftCnt, nftAddress);
       //   self.nftCnt = self.nftCnt + 1;
@@ -124,7 +124,7 @@ contract Task5 with Deployable {
     }
 
     nativeReserve(myBalance() - context().value + ton("2"), 0);
-    self.send_nft(nftAddress, prevOwner, msg.queryId, 128);
+    self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
   }
 
   receive(msg: AdminWithdrawalProfit) {
@@ -144,19 +144,22 @@ contract Task5 with Deployable {
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
-    let minTons: Int = 1000000000 + self.nftCnt * 80000000;
-    require(myBalance() >= minTons, "Insufficent funds");
-    // require(context().value >= minTons, "Insufficent funds");
+    let n008: Int = ton("0.08");
+    let minTons: Int = 1000000000 + self.nftCnt * n008;
+    // require(myBalance() >= minTons, "Insufficent funds");
+    require(context().value >= minTons, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
 
     let it: Int = 0;
     repeat (self.nftCnt) {
       let nftAddress: Address = self.nftCollection.get(it)!!;
       let mode: Int = 0;
+      let amount: Int = n008;
       if (it == self.nftCnt - 1) {
         mode = 64;
+        amount = 0;
       }
-      self.send_nft(nftAddress, self.owner, msg.queryId, mode);
+      self.send_nft(nftAddress, self.owner, msg.queryId, amount, mode);
       it = it + 1;
     }
     self.nftCollection = emptyMap();
