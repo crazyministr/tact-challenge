@@ -136,10 +136,10 @@ contract Task3 with Deployable {
   } 
 
   get fun price(token: Address): Int {
-    if (token == self.jAddressA) {
-      return self.calc_price(self.bAmount, self.aAmount);
-    }
-    return self.calc_price(self.aAmount, self.bAmount);
+    if (token == self.jAddressA) {return self.calc_price(self.aAmount, self.bAmount);}
+    return self.calc_price(self.bAmount, self.aAmount);
+    // if (token == self.jAddressA) {return self.calc_price(self.bAmount, self.aAmount);}
+    // return self.calc_price(self.aAmount, self.bAmount);
   }
 
   get fun balance(token: Address): Int {
