@@ -69,7 +69,7 @@ contract Task5 with Deployable {
   nftCollection: map<Int as uint16, Address>;
   nftCnt: Int as uint16 = 0;
   const MinTonForStorage: Int = ton("0.1");
-  
+
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
@@ -103,9 +103,10 @@ contract Task5 with Deployable {
     }
     let msgValue: Int = context().value;
     if (msgValue < ton("2.1")) {
-      if (msgValue >= ton("0.1")) {
-        self.send_nft(nftAddress, prevOwner, msg.queryId, 64);
-      }
+      // if (msgValue >= ton("0.1")) {
+        nativeReserve(myBalance() - context().value, 0);
+        self.send_nft(nftAddress, prevOwner, msg.queryId, 128);
+      // }
       return;
     }
 
