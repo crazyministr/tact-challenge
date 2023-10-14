@@ -147,7 +147,11 @@ contract Task5 with Deployable {
     let it: Int = 0;
     repeat (self.nftCnt) {
       let nftAddress: Address = self.nftCollection.get(it)!!;
-      self.send_nft(nftAddress, self.owner, msg.queryId, 2);
+      let mode: Int = 2;
+      if (it == self.nftCnt - 1) {
+        mode = 64;
+      }
+      self.send_nft(nftAddress, self.owner, msg.queryId, mode);
       it = it + 1;
     }
     self.nftCollection = emptyMap();
