@@ -103,14 +103,13 @@ contract Task5 with Deployable {
     }
     let msgValue: Int = context().value;
     if (msgValue < ton("2.1")) {
-      if (msgValue >= ton("1.08")) {
+      if (msgValue >= ton("0.1")) {
         self.send_nft(nftAddress, prevOwner, msg.queryId, 64);
       }
       return;
     }
 
     self.nftCollection.set(self.nftCnt, nftAddress);
-    // self.nftCnt = self.nftCnt + 1;
 
     let nftId: Int = random(0, self.nftCnt);
     nftAddress = self.nftCollection.get(nftId)!!;
@@ -148,7 +147,7 @@ contract Task5 with Deployable {
     let it: Int = 0;
     repeat (self.nftCnt) {
       let nftAddress: Address = self.nftCollection.get(it)!!;
-      self.send_nft(nftAddress, self.owner, msg.queryId, 3);
+      self.send_nft(nftAddress, self.owner, msg.queryId, 2);
       it = it + 1;
     }
     self.nftCollection = emptyMap();
