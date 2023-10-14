@@ -126,11 +126,14 @@ contract Task5 with Deployable {
 
   receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
+    nativeReserve(self.MinTonForStorage, 0);
     send(SendParameters{
       to: self.owner,
       bounce: true,
-      value: myBalance() - context().value - self.MinTonForStorage,
-      mode: SendRemainingValue + SendIgnoreErrors,
+      // value: myBalance() - context().value - self.MinTonForStorage,
+      value: 0,
+      // mode: SendRemainingValue + SendIgnoreErrors,
+      mode: SendRemainingBalance,
       body: AdminFetchProfit{
         queryId: msg.queryId
       }.toCell()
@@ -153,7 +156,7 @@ contract Task5 with Deployable {
   get fun profit(): Int {
     return myBalance() - self.MinTonForStorage;
   }
-  
+
   get fun nfts(): map<Int as uint16, Address> {
     return self.nftCollection;
   }
