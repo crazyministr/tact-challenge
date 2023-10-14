@@ -145,6 +145,7 @@ contract Task3 with Deployable {
     }
     return mydiv(self.bAmount, self.aAmount, self.decimal);
     */
+    return 0;
   }
   
   get fun balance(jetton: Address): Int { 
@@ -154,6 +155,7 @@ contract Task3 with Deployable {
     }
     return self.bAmount;
     */
+    return 0;
   }
 }
 
