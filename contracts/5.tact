@@ -66,24 +66,95 @@ message(0x5fcc3d14) Transfer {
 contract Task5 with Deployable {
   seed: Int as uint128;
   owner: Address;
+  nftCollection: map<Int as uint16, Address>;
+  nftCnt: Int as uint16 = 0;
+  const MinTonForStorage: Int = ton("0.1");
   
   init(seed: Int, owner: Address) {
     self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
+    self.nftCollection = emptyMap();
+  }
+
+  fun send_nft(nftAddress: Address, toAddress: Address) {
+    send(SendParameters{
+      to: nftAddress,
+      bounce: true,
+      value: 0,
+      mode: SendRemainingValue + SendIgnoreErrors,
+      body: Transfer{
+        queryId: 13,
+        newOwner: toAddress,
+        responseDestination: toAddress,
+        customPayload: null,
+        forwardAmount: 0,
+        forwardPayload: emptySlice()
+      }.toCell()
+    });
   }
 
   receive(msg: OwnershipAssigned) {
+    let nftAddress: Address = sender();
+    let prevOwner: Address = msg.prevOwner;
+    if (prevOwner == self.owner) {
+      self.nftCollection.set(self.nftCnt, nftAddress);
+      self.nftCnt = self.nftCnt + 1;
+      return;
+    }
+    let msgValue: Int = context().value;
+    if (msgValue < ton("2.1")) {
+      nativeReserve(myBalance(), 0);
+      // TODO: check if enouth TONs to send NFT back
+      self.send_nft(nftAddress, prevOwner);
+      return;
+    }
+
+    self.nftCollection.set(self.nftCnt, nftAddress);
+    // self.nftCnt = self.nftCnt + 1;
+
+    let nftId: Int = random(0, self.nftCnt);
+    nftAddress = self.nftCollection.get(nftId)!!;
+
+    if (nftId < self.nftCnt) { // if its NOT last
+      self.nftCollection.set(nftId, self.nftCollection.get(self.nftCnt)!!);
+      self.nftCollection.set(self.nftCnt, null);
+    }
+
+    nativeReserve(myBalance() + ton("2"), 0);
+    self.send_nft(nftAddress, prevOwner);
   }
 
   receive(msg: AdminWithdrawalFees) {
+    require(sender() == self.owner, "Insufficient privelegies");
+    send(SendParameters{
+      to: self.owner,
+      bounce: true,
+      value: myBalance() - context().value - self.MinTonForStorage,
+      mode: SendRemainingValue + SendIgnoreErrors,
+      body: AdminFetchFees{
+        queryId: msg.queryId
+      }.toCell()
+    });
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
+    let minTons: Int = 1000000000 + self.nftCnt * 80000000;
+    require(context().value >= minTons, "Insufficent funds");
+    let it: Int = 0;
+    repeat (self.nftCnt) {
+      let nftAddress: Address = self.nftCollection.get(it)!!;
+      self.send_nft(nftAddress, self.owner);
+      it = it + 1;
+    }
+    self.nftCollection = emptyMap();
+    self.nftCnt = 0;
   }
 
-  get fun profit(): Int { 
+  get fun profit(): Int {
+    return myBalance() - self.MinTonForStorage;
   }
   
-  get fun nfts(): map<Int as uint16, Address> { 
+  get fun nfts(): map<Int as uint16, Address> {
+    return self.nftCollection;
   }
 }

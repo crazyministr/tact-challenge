@@ -97,7 +97,7 @@ contract Task4 with Deployable {
 
     require(self.nft_address == msg.nftAddress, "Invalid nftAddress");
 
-    // self.owner = null;
+    self.owner = null;
     self.nft_address = null;
     send(SendParameters{
       to: msg.nftAddress,

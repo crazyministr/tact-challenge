@@ -33,8 +33,7 @@ message(0x7362d09c) TokenNotification {
     forwardPayload: Slice as remaining;
 }
 
-// message(0xf8a7ea5) TokenTransfer {
-message(0x178d4519) TokenTransfer {
+message(0xf8a7ea5) TokenTransfer {
     queryId: Int as uint64;
     amount: Int as coins;
     destination: Address;
@@ -143,9 +142,7 @@ contract Task3 with Deployable {
   }
 
   get fun balance(token: Address): Int {
-    if (token == self.jAddressA) {
-      return self.aAmount;
-    }
+    if (token == self.jAddressA) {return self.aAmount;}
     return self.bAmount;
   }
 }
