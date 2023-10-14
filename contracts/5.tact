@@ -151,10 +151,10 @@ contract Task5 with Deployable {
     require(sender() == self.owner, "Invalid sender");
 
     let it: Int = 0;
-    repeat (self.nftCnt) {
+    repeat (min(self.nftCnt, 100)) {
       let nftAddress: Address = self.nftCollection.get(it)!!;
       let mode: Int = 3;
-      let amount: Int = ton("0.01");
+      let amount: Int = n008;
       // if (it == self.nftCnt - 1) {
       //   mode = 64;
       //   amount = 0;
