@@ -88,7 +88,6 @@ contract Task3 with Deployable {
         return 0;
     }
     return to * self.decimal / from;
-    // return from * self.decimal / to;
   }
 
   receive(msg: TokenNotification) {
@@ -146,7 +145,7 @@ contract Task3 with Deployable {
   }
 
   get fun balance(token: Address): Int {
-    if (token == self.jAddressA) {return self.bAmount;}
-    return self.aAmount;
+    if (token == self.jAddressA) {return self.aAmount;}
+    return self.bAmount;
   }
 }

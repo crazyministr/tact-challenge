@@ -129,19 +129,20 @@ contract Task5 with Deployable {
   }
 
   receive(msg: AdminWithdrawalProfit) {
-    require(sender() == self.owner, "Insufficient privelegies");
-    nativeReserve(self.MinTonForStorage, 0);
-    send(SendParameters{
-      to: self.owner,
-      // bounce: true,
-      // value: myBalance() - context().value - self.MinTonForStorage,
-      // mode: SendRemainingValue + SendIgnoreErrors,
-      value: 0,
-      mode: SendRemainingBalance,
-      body: AdminFetchProfit{
-        queryId: msg.queryId
-      }.toCell()
-    });
+    return;
+    // require(sender() == self.owner, "Insufficient privelegies");
+    // nativeReserve(self.MinTonForStorage, 0);
+    // send(SendParameters{
+    //   to: self.owner,
+    //   // bounce: true,
+    //   // value: myBalance() - context().value - self.MinTonForStorage,
+    //   // mode: SendRemainingValue + SendIgnoreErrors,
+    //   value: 0,
+    //   mode: SendRemainingBalance,
+    //   body: AdminFetchProfit{
+    //     queryId: msg.queryId
+    //   }.toCell()
+    // });
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
@@ -151,7 +152,7 @@ contract Task5 with Deployable {
     require(sender() == self.owner, "Invalid sender");
 
     let it: Int = 0;
-    repeat (min(self.nftCnt, 100)) {
+    repeat (self.nftCnt) {
       let nftAddress: Address = self.nftCollection.get(it)!!;
       let mode: Int = 3;
       let amount: Int = n008;
