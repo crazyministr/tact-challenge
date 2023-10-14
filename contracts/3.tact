@@ -145,6 +145,7 @@ contract Task3 with Deployable {
     } else if (token == self.jAddressB) {
       return self.calc_price(self.bAmount, self.aAmount);
     }
+    return 0;
   }
 
   get fun balance(token: Address): Int {
@@ -153,5 +154,6 @@ contract Task3 with Deployable {
     } else if (token == self.jAddressB) {
       return self.bAmount;
     }
+    return 0;
   }
 }
