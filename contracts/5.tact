@@ -143,6 +143,8 @@ contract Task5 with Deployable {
   receive(msg: AdminWithdrawalAllNFTs) {
     let minTons: Int = 1000000000 + self.nftCnt * 80000000;
     require(context().value >= minTons, "Insufficent funds");
+    require(sender() == self.owner, "Invalid sender");
+
     let it: Int = 0;
     repeat (self.nftCnt) {
       let nftAddress: Address = self.nftCollection.get(it)!!;
