@@ -78,7 +78,7 @@ contract Task3 with Deployable {
     send(SendParameters{
         to: jettonWallet,
         value: 0,
-        mode: 0,
+        mode: SendRemainingValue + SendIgnoreErrors,
         body: TokenTransfer{
           queryId: queryId,
           amount: amount,
@@ -115,14 +115,23 @@ contract Task3 with Deployable {
     let needToSend: Int = price * msg.amount / self.decimal;
 
     if (needToSend > swapTo || needToSend <= 0) {
-      // return tokens back
-      self.transferJettons(
-        jettonWallet,
-        msg.from,
-        msg.amount,
-        msg.queryId,
-        0, msg.forwardPayload
-      );
+      if (context().value >= ton("0.1")) {
+        self.transferJettons(
+          jettonWallet,
+          msg.from,
+          msg.amount,
+          msg.queryId,
+          0, msg.forwardPayload
+        );
+      } else {
+        if (jettonWallet == self.jAddressA) {
+          self.aAmount = self.aAmount + msg.amount;
+          self.bAmount = self.bAmount - needToSend;
+        } else {
+          self.bAmount = self.bAmount + msg.amount;
+          self.aAmount = self.aAmount - needToSend;
+        }
+      }
       return;
     }
 
