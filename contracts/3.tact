@@ -113,7 +113,7 @@ contract Task3 with Deployable {
     let price: Int = self.calc_price(swapTo, swapFrom);
     let needToSend: Int = price * msg.amount / self.decimal;
 
-    if (needToSend > swapTo || needToSend == 0) {
+    if (needToSend >= swapTo || needToSend == 0) {
       // return tokens back
       transferJettons(
         jettonWallet,
