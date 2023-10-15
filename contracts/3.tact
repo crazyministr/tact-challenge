@@ -77,7 +77,7 @@ contract Task3 with Deployable {
   fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int, forwardTonAmount: Int, forwardPayload: Slice) {
     send(SendParameters{
         to: jettonWallet,
-        value: 0,
+        value: ton("0.01"),
         mode: 1,
         body: TokenTransfer{
           queryId: queryId,
