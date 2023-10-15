@@ -126,10 +126,8 @@ contract Task3 with Deployable {
       } else {
         if (jettonWallet == self.jAddressA) {
           self.aAmount = self.aAmount + msg.amount;
-          self.bAmount = self.bAmount - needToSend;
         } else {
           self.bAmount = self.bAmount + msg.amount;
-          self.aAmount = self.aAmount - needToSend;
         }
       }
       return;
