@@ -115,21 +115,14 @@ contract Task3 with Deployable {
     let needToSend: Int = price * msg.amount / self.decimal;
 
     if (needToSend > swapTo || needToSend <= 0) {
-      if (context().value >= ton("0.1")) {
-        self.transferJettons(
-          jettonWallet,
-          msg.from,
-          msg.amount,
-          msg.queryId,
-          0, msg.forwardPayload
-        );
-      } else {
-        if (jettonWallet == self.jAddressA) {
-          self.aAmount = self.aAmount + msg.amount;
-        } else {
-          self.bAmount = self.bAmount + msg.amount;
-        }
-      }
+      self.transferJettons(
+        jettonWallet,
+        msg.from,
+        msg.amount,
+        msg.queryId,
+        ton("0.01"),
+        msg.forwardPayload
+      );
       return;
     }
 
@@ -137,11 +130,11 @@ contract Task3 with Deployable {
     if (jettonWallet == self.jAddressA) {
       self.aAmount = self.aAmount + msg.amount;
       self.bAmount = self.bAmount - needToSend;
-      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
+      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, ton("0.01"), msg.forwardPayload);
     } else {
       self.bAmount = self.bAmount + msg.amount;
       self.aAmount = self.aAmount - needToSend;
-      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
+      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, ton("0.01"), msg.forwardPayload);
     }
   } 
 
