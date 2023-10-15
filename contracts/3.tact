@@ -49,22 +49,6 @@ message(0xf8a7ea5) TokenTransfer {
     forwardPayload: Slice as remaining;
 }
 
-fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int, forwardTonAmount: Int, forwardPayload: Slice) {
-    send(SendParameters{
-        to: jettonWallet,
-        value: 0,
-        mode: SendRemainingValue + SendIgnoreErrors,
-        body: TokenTransfer{
-          queryId: queryId,
-          amount: amount,
-          destination: destination,
-          responseDestination: destination,
-          customPayload: null,
-          forwardTonAmount: forwardTonAmount,
-          forwardPayload: forwardPayload
-        }.toCell()
-    });
-}
 
 contract Task3 with Deployable {
   owner: Address;
@@ -90,11 +74,25 @@ contract Task3 with Deployable {
     return to * self.decimal / from;
   }
 
+  fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int, forwardTonAmount: Int, forwardPayload: Slice) {
+    send(SendParameters{
+        to: jettonWallet,
+        value: 0,
+        mode: SendRemainingValue + SendIgnoreErrors,
+        body: TokenTransfer{
+          queryId: queryId,
+          amount: amount * self.decimal,
+          destination: destination,
+          responseDestination: destination,
+          customPayload: null,
+          forwardTonAmount: forwardTonAmount,
+          forwardPayload: forwardPayload
+        }.toCell()
+    });
+  }
+
   receive(msg: TokenNotification) {
     let jettonWallet: Address = sender();
-    // if ((jettonWallet != self.jAddressA) && (jettonWallet != self.jAddressB)) {
-    //   return;
-    // }
     require((jettonWallet == self.jAddressA) || (jettonWallet == self.jAddressB), "Invalid jetton wallet");
 
     if (self.owner == msg.from) {
@@ -118,7 +116,7 @@ contract Task3 with Deployable {
 
     if (needToSend > swapTo || needToSend <= 0) {
       // return tokens back
-      transferJettons(
+      self.transferJettons(
         jettonWallet,
         msg.from,
         msg.amount,
@@ -132,11 +130,11 @@ contract Task3 with Deployable {
     if (jettonWallet == self.jAddressA) {
       self.aAmount = self.aAmount + msg.amount;
       self.bAmount = self.bAmount - needToSend;
-      transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
+      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
     } else {
       self.bAmount = self.bAmount + msg.amount;
       self.aAmount = self.aAmount - needToSend;
-      transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
+      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
     }
   } 
 
