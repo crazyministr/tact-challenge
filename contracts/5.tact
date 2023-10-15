@@ -45,6 +45,10 @@ message AdminWithdrawalAllNFTs {
   queryId: Int as uint64;
 }
 
+message(0x1313) KeepWithdrawalAllNFTs {
+  queryId: Int as uint64;
+}
+
 message AdminFetchProfit {
   queryId: Int as uint64;
 }
@@ -152,16 +156,50 @@ contract Task5 with Deployable {
     require(sender() == self.owner, "Invalid sender");
     // require(self.nftCnt < 256, "cannot");
 
-    let it: Int = 0;
-    repeat (self.nftCnt) {
-      let nftAddress: Address = self.nftCollection.get(it)!!;
+    if (self.nftCnt > 0) {
+      send(SendParameters{
+        to: myAddress(),
+        value: 0,
+        mode: SendRemainingValue,
+        body: KeepWithdrawalAllNFTs{
+          queryId: msg.queryId
+        }.toCell()
+      });
+    }
+    // let it: Int = 0;
+    // repeat (self.nftCnt) {
+    //   let nftAddress: Address = self.nftCollection.get(it)!!;
+    //   let mode: Int = 0;
+    //   let amount: Int = n001;
+    //   self.send_nft(nftAddress, self.owner, msg.queryId, amount, mode);
+    //   it = it + 1;
+    // }
+    // self.nftCollection = emptyMap();
+    // self.nftCnt = 0;
+  }
+
+  receive(msg: KeepWithdrawalAllNFTs) {
+    let n001: Int = ton("0.01");
+
+    repeat (min(self.nftCnt, 100)) {
+      let nftAddress: Address = self.nftCollection.get(self.nftCnt - 1)!!;
       let mode: Int = 0;
       let amount: Int = n001;
       self.send_nft(nftAddress, self.owner, msg.queryId, amount, mode);
-      it = it + 1;
+      self.nftCnt = self.nftCnt - 1;
     }
-    self.nftCollection = emptyMap();
-    self.nftCnt = 0;
+    if (self.nftCnt == 0) {
+      self.nftCollection = emptyMap();
+    } else {
+      send(SendParameters{
+        to: myAddress(),
+        value: 0,
+        mode: SendRemainingValue,
+        body: KeepWithdrawalAllNFTs{
+          queryId: msg.queryId
+        }.toCell()
+      });
+    }
   }
 
   get fun profit(): Int {
