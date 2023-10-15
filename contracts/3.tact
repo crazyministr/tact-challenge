@@ -53,7 +53,7 @@ fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, qu
     send(SendParameters{
         to: jettonWallet,
         value: 0,
-        mode: SendRemainingValue,
+        mode: SendRemainingValue + SendIgnoreErrors,
         body: TokenTransfer{
           queryId: queryId,
           amount: amount,
