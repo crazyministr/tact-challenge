@@ -92,7 +92,7 @@ contract Task3 with Deployable {
 
   receive(msg: TokenNotification) {
     let jettonWallet: Address = sender();
-    require(jettonWallet == self.jAddressA || jettonWallet == self.jAddressB, "Invalid jetton wallet");
+    require((jettonWallet == self.jAddressA) || (jettonWallet == self.jAddressB), "Invalid jetton wallet");
 
     if (self.owner == msg.from) {
       if (jettonWallet == self.jAddressA) {

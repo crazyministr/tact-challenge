@@ -129,20 +129,19 @@ contract Task5 with Deployable {
   }
 
   receive(msg: AdminWithdrawalProfit) {
-    return;
-    // require(sender() == self.owner, "Insufficient privelegies");
-    // nativeReserve(self.MinTonForStorage, 0);
-    // send(SendParameters{
-    //   to: self.owner,
-    //   // bounce: true,
-    //   // value: myBalance() - context().value - self.MinTonForStorage,
-    //   // mode: SendRemainingValue + SendIgnoreErrors,
-    //   value: 0,
-    //   mode: SendRemainingBalance,
-    //   body: AdminFetchProfit{
-    //     queryId: msg.queryId
-    //   }.toCell()
-    // });
+    require(sender() == self.owner, "Insufficient privelegies");
+    nativeReserve(self.MinTonForStorage, 0);
+    send(SendParameters{
+      to: self.owner,
+      // bounce: true,
+      // value: myBalance() - context().value - self.MinTonForStorage,
+      // mode: SendRemainingValue + SendIgnoreErrors,
+      value: 0,
+      mode: SendRemainingBalance,
+      body: AdminFetchProfit{
+        queryId: msg.queryId
+      }.toCell()
+    });
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
