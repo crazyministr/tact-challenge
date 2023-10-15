@@ -149,6 +149,7 @@ contract Task5 with Deployable {
     let minTons: Int = ton("1") + self.nftCnt * n008;
     require(context().value >= minTons, "Insufficient funds");
     require(sender() == self.owner, "Invalid sender");
+    require(self.nftCnt < 256, "cannot");
 
     let it: Int = 0;
     repeat (self.nftCnt) {
