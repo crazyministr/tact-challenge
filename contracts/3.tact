@@ -78,7 +78,7 @@ contract Task3 with Deployable {
     send(SendParameters{
         to: jettonWallet,
         value: ton("0.01"),
-        mode: 1,
+        mode: 0,
         body: TokenTransfer{
           queryId: queryId,
           amount: amount,
