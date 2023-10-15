@@ -155,10 +155,10 @@ contract Task5 with Deployable {
       let nftAddress: Address = self.nftCollection.get(it)!!;
       let mode: Int = 3;
       let amount: Int = n008;
-      // if (it == self.nftCnt - 1) {
-      //   mode = 64;
-      //   amount = 0;
-      // }
+      if (it == self.nftCnt - 1) {
+        mode = 64;
+        amount = 0;
+      }
       self.send_nft(nftAddress, self.owner, msg.queryId, amount, mode);
       it = it + 1;
     }
