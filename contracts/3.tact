@@ -110,10 +110,10 @@ contract Task3 with Deployable {
     }
 
     let price: Int = self.calc_price(swapTo, swapFrom);
-    // if (price == 0) {
-    //   self.transferJettons(jettonWallet, msg.from, msg.amount, msg.queryId, msg.forwardPayload);
-    //   return;
-    // }
+    if (price == 0) {
+      self.transferJettons(jettonWallet, msg.from, msg.amount);
+      return;
+    }
     let needToSend: Int = price * msg.amount / self.decimal;
 
     if (needToSend > swapTo) {
