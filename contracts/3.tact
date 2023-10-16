@@ -49,14 +49,14 @@ message(0xf8a7ea5) TokenTransfer {
     forwardPayload: Slice as remaining;
 }
 
-message(0xd53276db) ExcessesTransfer {
-  queryId: Int as uint64;
-}
+// message(0xd53276db) ExcessesTransfer {
+//   queryId: Int as uint64;
+// }
 
-struct ExcessesTransferDictValue {
-    amountMinus: Int as coins;
-    amountPlus: Int as coins;
-}
+// struct ExcessesTransferDictValue {
+//     amountMinus: Int as coins;
+//     amountPlus: Int as coins;
+// }
 
 contract Task3 with Deployable {
   owner: Address;
@@ -65,7 +65,7 @@ contract Task3 with Deployable {
   jAddressA: Address;
   jAddressB: Address;
   decimal: Int;
-  amountByQueryId: map<Int as uint64, ExcessesTransferDictValue>;
+  // amountByQueryId: map<Int as uint64, ExcessesTransferDictValue>;
 
   init(admin: Address, newJAddressA: Address, newJAddressB: Address) {
     self.owner = admin;
@@ -74,7 +74,7 @@ contract Task3 with Deployable {
     self.aAmount = 0;
     self.bAmount = 0;
     self.decimal = 1000000000;
-    self.amountByQueryId = emptyMap();
+    // self.amountByQueryId = emptyMap();
   }
 
   fun calc_price(to: Int, from: Int): Int {
@@ -101,18 +101,18 @@ contract Task3 with Deployable {
     });
   }
 
-  receive(msg: ExcessesTransfer) {
-    let jettonWallet: Address = sender();
-    let queryId: Int = msg.queryId;
-    let item: ExcessesTransferDictValue = self.amountByQueryId.get(queryId)!!;
-    if (jettonWallet == self.jAddressA) {
-      self.bAmount = self.bAmount + item.amountPlus;
-      self.aAmount = self.aAmount - item.amountMinus;
-    } else {
-      self.aAmount = self.aAmount + item.amountPlus;
-      self.bAmount = self.bAmount - item.amountMinus;
-    }
-  }
+  // receive(msg: ExcessesTransfer) {
+  //   let jettonWallet: Address = sender();
+  //   let queryId: Int = msg.queryId;
+  //   let item: ExcessesTransferDictValue = self.amountByQueryId.get(queryId)!!;
+  //   if (jettonWallet == self.jAddressA) {
+  //     self.bAmount = self.bAmount + item.amountPlus;
+  //     self.aAmount = self.aAmount - item.amountMinus;
+  //   } else {
+  //     self.aAmount = self.aAmount + item.amountPlus;
+  //     self.bAmount = self.bAmount - item.amountMinus;
+  //   }
+  // }
 
   receive(msg: TokenNotification) {
     let jettonWallet: Address = sender();
@@ -134,7 +134,7 @@ contract Task3 with Deployable {
       swapTo = self.bAmount;
     }
 
-    let price: Int = self.calc_price(swapTo, swapFrom);
+    let price: Int = self.calc_price(swapTo, swapFrom + msg.amount);
     let needToSend: Int = price * msg.amount / self.decimal;
 
     if (needToSend > swapTo || needToSend <= 0) {
@@ -150,14 +150,14 @@ contract Task3 with Deployable {
 
     // swap
     if (jettonWallet == self.jAddressA) {
-      // self.aAmount = self.aAmount + msg.amount;
-      // self.bAmount = self.bAmount - needToSend;
-      self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
+      self.aAmount = self.aAmount + msg.amount;
+      self.bAmount = self.bAmount - needToSend;
+      // self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
       self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload, myAddress());
     } else {
-      // self.bAmount = self.bAmount + msg.amount;
-      // self.aAmount = self.aAmount - needToSend;
-      self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
+      self.bAmount = self.bAmount + msg.amount;
+      self.aAmount = self.aAmount - needToSend;
+      // self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
       self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload, myAddress());
     }
   } 
