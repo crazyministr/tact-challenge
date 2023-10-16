@@ -82,7 +82,7 @@ contract Task3 with Deployable {
           destination: destination,
           responseDestination: myAddress(),
           customPayload: null,
-          forwardTonAmount: 10000000,
+          forwardTonAmount: 10000000,  // 0.01 TON
           forwardPayload: forwardPayload
         }.toCell()
     });
@@ -109,9 +109,13 @@ contract Task3 with Deployable {
     }
 
     let price: Int = self.calc_price(swapTo, swapFrom);
+    if (price == 0) {
+      self.transferJettons(jettonWallet, msg.from, msg.amount, msg.queryId, msg.forwardPayload);
+      return;
+    }
     let needToSend: Int = price * msg.amount / self.decimal;
 
-    if (needToSend > swapTo || needToSend <= 0) {
+    if (needToSend > swapTo) {
       self.transferJettons(jettonWallet, msg.from, msg.amount, msg.queryId, msg.forwardPayload);
       return;
     }
@@ -131,8 +135,6 @@ contract Task3 with Deployable {
   get fun price(token: Address): Int {
     if (token == self.jAddressA) {return self.calc_price(self.bAmount, self.aAmount);}
     return self.calc_price(self.aAmount, self.bAmount);
-    // if (token == self.jAddressA) {return self.calc_price(self.bAmount, self.aAmount);}
-    // return self.calc_price(self.aAmount, self.bAmount);
   }
 
   get fun balance(token: Address): Int {
