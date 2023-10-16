@@ -134,7 +134,7 @@ contract Task3 with Deployable {
       swapTo = self.bAmount;
     }
 
-    let price: Int = self.calc_price(swapTo, swapFrom + msg.amount);
+    let price: Int = self.calc_price(swapTo, swapFrom);
     let needToSend: Int = price * msg.amount / self.decimal;
 
     if (needToSend > swapTo || needToSend <= 0) {
