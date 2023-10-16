@@ -120,20 +120,20 @@ contract Task3 with Deployable {
         msg.from,
         msg.amount,
         msg.queryId,
-        context().value / 2, msg.forwardPayload
+        0, msg.forwardPayload
       );
       return;
     }
 
     // swap
     if (jettonWallet == self.jAddressA) {
-      self.aAmount = self.aAmount + msg.amount;
-      self.bAmount = self.bAmount - needToSend;
-      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, context().value / 2, msg.forwardPayload);
-    } else {
       self.bAmount = self.bAmount + msg.amount;
       self.aAmount = self.aAmount - needToSend;
-      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, context().value / 2, msg.forwardPayload);
+      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
+    } else {
+      self.aAmount = self.aAmount + msg.amount;
+      self.bAmount = self.bAmount - needToSend;
+      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
     }
   } 
 
