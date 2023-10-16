@@ -107,8 +107,8 @@ contract Task5 with Deployable {
       return;
     }
     let msgValue: Int = context().value;
-    if (msgValue < ton("2.1")) {
-      nativeReserve(myBalance() - context().value, 0);
+    if (msgValue < 2100000000) {  // 2.1 TON
+      nativeReserve(myBalance() - msgValue, 0);
       self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
       return;
     }
@@ -123,20 +123,20 @@ contract Task5 with Deployable {
       self.nftCollection.set(self.nftCnt, null);
     }
 
-    nativeReserve(myBalance() - context().value + ton("2"), 0);
+    nativeReserve(myBalance() - msgValue + 2000000000, 0);  // 2 TON
     self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
   }
 
   receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
-    nativeReserve(self.MinTonForStorage, 0);
+    // nativeReserve(self.MinTonForStorage, 0);
     send(SendParameters{
       to: self.owner,
       // bounce: true,
-      // value: myBalance() - context().value - self.MinTonForStorage,
-      // mode: SendRemainingValue + SendIgnoreErrors,
-      value: 0,
-      mode: SendRemainingBalance,
+      value: myBalance() - context().value - self.MinTonForStorage,
+      mode: SendRemainingValue + SendIgnoreErrors,
+      // value: 0,
+      // mode: SendRemainingBalance,
       body: AdminFetchProfit{
         queryId: msg.queryId
       }.toCell()
@@ -163,9 +163,7 @@ contract Task5 with Deployable {
       let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
       self.send_nft(nftAddress, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
     }
-    if (self.nftCnt == 0) {
-      self.nftCollection = emptyMap();
-    } else {
+    if (self.nftCnt > 0) {
       send(SendParameters{
         to: myAddress(),
         value: 0,
@@ -175,19 +173,18 @@ contract Task5 with Deployable {
         }.toCell()
       });
     }
+    else {
+      self.nftCollection = emptyMap();
+    }
   }
 
   receive(msg: KeepWithdrawalAllNFTs) {
-    // let n001: Int = ton("0.01");
-
     repeat (min(self.nftCnt, 100)) {
       self.nftCnt = self.nftCnt - 1;
       let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
       self.send_nft(nftAddress, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
     }
-    if (self.nftCnt == 0) {
-      self.nftCollection = emptyMap();
-    } else {
+    if (self.nftCnt > 0) {
       send(SendParameters{
         to: myAddress(),
         value: 0,
@@ -196,6 +193,9 @@ contract Task5 with Deployable {
           queryId: msg.queryId
         }.toCell()
       });
+    }
+    else {
+      self.nftCollection = emptyMap();
     }
   }
 
