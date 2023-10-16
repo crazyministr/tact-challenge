@@ -73,7 +73,7 @@ contract Task5 with Deployable {
   owner: Address;
   nftCollection: map<Int as uint16, Address>;
   nftCnt: Int as uint16 = 0;
-  const MinTonForStorage: Int = ton("0.1");
+  const MinTonForStorage: Int = 100000000;  // ton("0.1");
 
   init(seed: Int, owner: Address) {
     self.owner = owner;
@@ -84,7 +84,6 @@ contract Task5 with Deployable {
   fun send_nft(nftAddress: Address, toAddress: Address, queryId: Int, amount: Int, mode: Int) {
     send(SendParameters{
       to: nftAddress,
-      // bounce: true,
       value: amount,
       mode: mode,
       body: Transfer{
@@ -113,6 +112,8 @@ contract Task5 with Deployable {
       return;
     }
 
+    nativeReserve(myBalance() - msgValue + 2000000000, 0);  // 2 TON
+
     self.nftCollection.set(self.nftCnt, nftAddress);
 
     let nftId: Int = random(0, self.nftCnt);
@@ -123,7 +124,6 @@ contract Task5 with Deployable {
       self.nftCollection.set(self.nftCnt, null);
     }
 
-    nativeReserve(myBalance() - msgValue + 2000000000, 0);  // 2 TON
     self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
   }
 
@@ -134,7 +134,7 @@ contract Task5 with Deployable {
       to: self.owner,
       // bounce: true,
       value: myBalance() - context().value - self.MinTonForStorage,
-      mode: SendRemainingValue + SendIgnoreErrors,
+      mode: 66,  // SendRemainingValue + SendIgnoreErrors,
       // value: 0,
       // mode: SendRemainingBalance,
       body: AdminFetchProfit{
@@ -148,29 +148,16 @@ contract Task5 with Deployable {
     require(context().value >= minTons, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
 
-    // if (self.nftCnt > 0) {
-    //   send(SendParameters{
-    //     to: myAddress(),
-    //     value: 0,
-    //     mode: SendRemainingValue,
-    //     body: KeepWithdrawalAllNFTs{
-    //       queryId: msg.queryId
-    //     }.toCell()
-    //   });
-    // }
     repeat (min(self.nftCnt, 100)) {
       self.nftCnt = self.nftCnt - 1;
-      let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
-      self.send_nft(nftAddress, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
+      self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
         to: myAddress(),
         value: 0,
-        mode: SendRemainingValue,
-        body: KeepWithdrawalAllNFTs{
-          queryId: msg.queryId
-        }.toCell()
+        mode: 64,
+        body: KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
       });
     } else {
       self.nftCollection = emptyMap();
@@ -180,17 +167,14 @@ contract Task5 with Deployable {
   receive(msg: KeepWithdrawalAllNFTs) {
     repeat (min(self.nftCnt, 100)) {
       self.nftCnt = self.nftCnt - 1;
-      let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
-      self.send_nft(nftAddress, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
+      self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
         to: myAddress(),
         value: 0,
-        mode: SendRemainingValue,
-        body: KeepWithdrawalAllNFTs{
-          queryId: msg.queryId
-        }.toCell()
+        mode: 64,
+        body: KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
       });
     } else {
       self.nftCollection = emptyMap();
