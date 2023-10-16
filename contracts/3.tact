@@ -77,8 +77,8 @@ contract Task3 with Deployable {
   fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int, forwardTonAmount: Int, forwardPayload: Slice) {
     send(SendParameters{
         to: jettonWallet,
-        value: ton("0.01"),
-        mode: 0,
+        value: 0,
+        mode: SendRemainingValue + SendIgnoreErrors,
         body: TokenTransfer{
           queryId: queryId,
           amount: amount,
@@ -86,7 +86,7 @@ contract Task3 with Deployable {
           responseDestination: destination,
           customPayload: null,
           forwardTonAmount: forwardTonAmount,
-          forwardPayload: forwardPayload
+          forwardPayload: emptySlice()
         }.toCell()
     });
   }
@@ -120,8 +120,7 @@ contract Task3 with Deployable {
         msg.from,
         msg.amount,
         msg.queryId,
-        ton("0.01"),
-        msg.forwardPayload
+        context().value, msg.forwardPayload
       );
       return;
     }
@@ -130,11 +129,11 @@ contract Task3 with Deployable {
     if (jettonWallet == self.jAddressA) {
       self.aAmount = self.aAmount + msg.amount;
       self.bAmount = self.bAmount - needToSend;
-      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, ton("0.01"), msg.forwardPayload);
+      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, context().value, msg.forwardPayload);
     } else {
       self.bAmount = self.bAmount + msg.amount;
       self.aAmount = self.aAmount - needToSend;
-      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, ton("0.01"), msg.forwardPayload);
+      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, context().value, msg.forwardPayload);
     }
   } 
 
