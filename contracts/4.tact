@@ -60,25 +60,25 @@ contract Task4 with Deployable {
   }
 
   receive(msg: OwnershipAssigned) {
-    if (self.nft_address != null) {
-      send(SendParameters{
-        to: sender(),
-        value: 0,
-        mode: 64,
-        body: Transfer{
-          queryId: msg.queryId,
-          newOwner: msg.prevOwner,
-          responseDestination: msg.prevOwner,
-          customPayload: null,
-          forwardAmount: 0,
-          forwardPayload: emptySlice()
-        }.toCell()
-      });
+    if (self.nft_address == null) {
+      self.time = now() + msg.forwardPayload.preloadUint(32);
+      self.owner = msg.prevOwner;
+      self.nft_address = sender();
       return;
     }
-    self.time = now() + msg.forwardPayload.preloadUint(32);
-    self.owner = msg.prevOwner;
-    self.nft_address = sender();
+    send(SendParameters{
+      to: sender(),
+      value: 0,
+      mode: 64,
+      body: Transfer{
+        queryId: msg.queryId,
+        newOwner: msg.prevOwner,
+        responseDestination: msg.prevOwner,
+        customPayload: null,
+        forwardAmount: 0,
+        forwardPayload: emptySlice()
+      }.toCell()
+    });
   }
 
   receive(msg: NftWithdrawal) {
@@ -89,7 +89,7 @@ contract Task4 with Deployable {
           to: sender(),
           value: 0,
           mode: 64,
-          bounce: true,
+          // bounce: true,
           body: "NFT is still locked".asComment()
       });
       return;
