@@ -84,7 +84,7 @@ contract Task4 with Deployable {
   receive(msg: NftWithdrawal) {
     require(sender() == self.owner, "Invalid sender");
 
-    if (self.time > now()) {
+    if (now() < self.time) {
       send(SendParameters{
           to: sender(),
           value: 0,
@@ -103,8 +103,8 @@ contract Task4 with Deployable {
       mode: SendRemainingBalance,
       body: Transfer{
         queryId: msg.queryId,
-        newOwner: self.owner!!,
-        responseDestination: self.owner!!,
+        newOwner: sender(),
+        responseDestination: sender(),
         customPayload: null,
         forwardAmount: 0,
         forwardPayload: emptySlice()
