@@ -78,9 +78,12 @@ contract Task3 with Deployable {
   }
 
   fun calc_price(to: Int, from: Int): Int {
-    if (from == 0 || to == 0) {
-        return 0;
+    if (from == 0) {
+      return to;
     }
+    // if (from == 0 || to == 0) {
+    //     return 0;
+    // }
     return to * self.decimal / from;
   }
 
@@ -91,8 +94,8 @@ contract Task3 with Deployable {
     send(SendParameters{
         to: jettonWallet,
         value: 0,
-        // mode: SendRemainingValue + SendIgnoreErrors,
-        mode: SendRemainingBalance,
+        mode: SendRemainingValue + SendIgnoreErrors,
+        // mode: SendRemainingBalance,
         body: TokenTransfer{
           queryId: queryId,
           amount: amount,
@@ -136,6 +139,22 @@ contract Task3 with Deployable {
     if (jettonWallet == self.jAddressA) {
       swapFrom = self.aAmount;
       swapTo = self.bAmount;
+    }
+
+    if (swapFrom == 0 && swapTo > 0) {
+      // swap
+      if (jettonWallet == self.jAddressA) {
+        self.transferJettons(self.jAddressB, msg.from, self.bAmount, msg.queryId, 0, msg.forwardPayload, null);
+        self.aAmount = msg.amount;
+        self.bAmount = 0;
+        // self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
+      } else {
+        self.transferJettons(self.jAddressA, msg.from, self.aAmount, msg.queryId, 0, msg.forwardPayload, null);
+        self.bAmount = msg.amount;
+        self.aAmount = 0;
+        // self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
+      }
+      return;
     }
 
     let price: Int = self.calc_price(swapTo, swapFrom);
