@@ -127,21 +127,21 @@ contract Task3 with Deployable {
 
     // swap
     if (jettonWallet == self.jAddressA) {
-      self.bAmount = self.bAmount + msg.amount;
-      self.aAmount = self.aAmount - needToSend;
-      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
-    } else {
       self.aAmount = self.aAmount + msg.amount;
       self.bAmount = self.bAmount - needToSend;
       self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
+    } else {
+      self.bAmount = self.bAmount + msg.amount;
+      self.aAmount = self.aAmount - needToSend;
+      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload);
     }
   } 
 
   get fun price(token: Address): Int {
-    // if (token == self.jAddressA) {return self.calc_price(self.aAmount, self.bAmount);}
-    // return self.calc_price(self.bAmount, self.aAmount);
-    if (token == self.jAddressA) {return self.calc_price(self.bAmount, self.aAmount);}
-    return self.calc_price(self.aAmount, self.bAmount);
+    if (token == self.jAddressA) {return self.calc_price(self.aAmount, self.bAmount);}
+    return self.calc_price(self.bAmount, self.aAmount);
+    // if (token == self.jAddressA) {return self.calc_price(self.bAmount, self.aAmount);}
+    // return self.calc_price(self.aAmount, self.bAmount);
   }
 
   get fun balance(token: Address): Int {
