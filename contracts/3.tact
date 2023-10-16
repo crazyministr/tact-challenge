@@ -85,6 +85,9 @@ contract Task3 with Deployable {
   }
 
   fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int, forwardTonAmount: Int, forwardPayload: Slice, responseAddress: Address?) {
+    if (amount <= 0) {
+      return;
+    }
     send(SendParameters{
         to: jettonWallet,
         value: 0,
@@ -137,7 +140,8 @@ contract Task3 with Deployable {
     let price: Int = self.calc_price(swapTo, swapFrom);
     let needToSend: Int = price * msg.amount / self.decimal;
 
-    if (needToSend > swapTo || needToSend <= 0) {
+    if (needToSend > swapTo) {
+    // if (needToSend > swapTo || needToSend <= 0) {
       self.transferJettons(
         jettonWallet,
         msg.from,
