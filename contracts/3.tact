@@ -83,7 +83,7 @@ contract Task3 with Deployable {
           queryId: queryId,
           amount: amount,
           destination: destination,
-          responseDestination: destination,
+          responseDestination: null,
           customPayload: null,
           forwardTonAmount: forwardTonAmount,
           forwardPayload: beginCell().storeUint(13, 6).endCell().beginParse()
