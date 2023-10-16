@@ -78,12 +78,9 @@ contract Task3 with Deployable {
   }
 
   fun calc_price(to: Int, from: Int): Int {
-    if (from == 0) {
-      return to;
+    if (from == 0 || to == 0) {
+        return 0;
     }
-    // if (from == 0 || to == 0) {
-    //     return 0;
-    // }
     return to * self.decimal / from;
   }
 
@@ -95,7 +92,6 @@ contract Task3 with Deployable {
         to: jettonWallet,
         value: 0,
         mode: SendRemainingValue + SendIgnoreErrors,
-        // mode: SendRemainingBalance,
         body: TokenTransfer{
           queryId: queryId,
           amount: amount,
