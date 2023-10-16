@@ -91,7 +91,8 @@ contract Task3 with Deployable {
     send(SendParameters{
         to: jettonWallet,
         value: 0,
-        mode: SendRemainingValue + SendIgnoreErrors,
+        // mode: SendRemainingValue + SendIgnoreErrors,
+        mode: SendRemainingBalance,
         body: TokenTransfer{
           queryId: queryId,
           amount: amount,
