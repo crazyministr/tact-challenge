@@ -45,7 +45,7 @@ message AdminWithdrawalAllNFTs {
   queryId: Int as uint64;
 }
 
-message KeepWithdrawalAllNFTs {
+message(0x1313) KeepWithdrawalAllNFTs {
   queryId: Int as uint64;
 }
 
