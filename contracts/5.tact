@@ -45,7 +45,7 @@ message AdminWithdrawalAllNFTs {
   queryId: Int as uint64;
 }
 
-message(0x1313) KeepWithdrawalAllNFTs {
+message KeepWithdrawalAllNFTs {
   queryId: Int as uint64;
 }
 
@@ -178,7 +178,7 @@ contract Task5 with Deployable {
       let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
       // let mode: Int = 0;
       // let amount: Int = n001;
-      self.send_nft(nftAddress, self.owner, msg.queryId, 10000000, 0);
+      self.send_nft(nftAddress, self.owner, 0, 10000000, 0);
     }
     if (self.nftCnt == 0) {
       self.nftCollection = emptyMap();
