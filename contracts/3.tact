@@ -99,7 +99,7 @@ contract Task3 with Deployable {
           responseDestination: responseAddress,
           customPayload: null,
           forwardTonAmount: forwardTonAmount,
-          forwardPayload: beginCell().storeUint(13, 6).endCell().beginParse()
+          forwardPayload: beginCell().storeUint(1, 1).endCell().beginParse()
         }.toCell()
     });
   }
@@ -140,8 +140,8 @@ contract Task3 with Deployable {
     let price: Int = self.calc_price(swapTo, swapFrom);
     let needToSend: Int = price * msg.amount / self.decimal;
 
-    if (needToSend > swapTo) {
-    // if (needToSend > swapTo || needToSend <= 0) {
+    // if (needToSend > swapTo) {
+    if (needToSend > swapTo || needToSend <= 0) {
       self.transferJettons(
         jettonWallet,
         msg.from,
@@ -157,14 +157,14 @@ contract Task3 with Deployable {
       self.aAmount = self.aAmount + msg.amount;
       self.bAmount = self.bAmount - needToSend;
       // self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
-      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload, myAddress());
+      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload, null);
     } else {
       self.bAmount = self.bAmount + msg.amount;
       self.aAmount = self.aAmount - needToSend;
       // self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
-      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload, myAddress());
+      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, 0, msg.forwardPayload, null);
     }
-  } 
+  }
 
   get fun price(token: Address): Int {
     // if (token == self.jAddressA) {return self.calc_price(self.aAmount, self.bAmount);}
