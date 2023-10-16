@@ -71,19 +71,19 @@ contract Task3 with Deployable {
     return to * self.decimal / from;
   }
 
-  fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int, forwardPayload: Slice) {
+  fun transferJettons(jettonWallet: Address, destination: Address, amount: Int) {
     send(SendParameters{
         to: jettonWallet,
         value: 0,
         mode: SendRemainingValue,
         body: TokenTransfer{
-          queryId: queryId,
+          queryId: 0,
           amount: amount,
           destination: destination,
           responseDestination: myAddress(),
           customPayload: null,
           forwardTonAmount: 10000000,  // 0.01 TON
-          forwardPayload: forwardPayload
+          forwardPayload: emptySlice()
         }.toCell()
     });
   }
@@ -110,14 +110,14 @@ contract Task3 with Deployable {
     }
 
     let price: Int = self.calc_price(swapTo, swapFrom);
-    if (price == 0) {
-      self.transferJettons(jettonWallet, msg.from, msg.amount, msg.queryId, msg.forwardPayload);
-      return;
-    }
+    // if (price == 0) {
+    //   self.transferJettons(jettonWallet, msg.from, msg.amount, msg.queryId, msg.forwardPayload);
+    //   return;
+    // }
     let needToSend: Int = price * msg.amount / self.decimal;
 
     if (needToSend > swapTo) {
-      self.transferJettons(jettonWallet, msg.from, msg.amount, msg.queryId, msg.forwardPayload);
+      self.transferJettons(jettonWallet, msg.from, msg.amount);
       return;
     }
 
@@ -125,11 +125,11 @@ contract Task3 with Deployable {
     if (isjettonA) {
       self.aAmount = self.aAmount + msg.amount;
       self.bAmount = self.bAmount - needToSend;
-      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, msg.forwardPayload);
+      self.transferJettons(self.jAddressB, msg.from, needToSend);
     } else {
       self.bAmount = self.bAmount + msg.amount;
       self.aAmount = self.aAmount - needToSend;
-      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, msg.forwardPayload);
+      self.transferJettons(self.jAddressA, msg.from, needToSend);
     }
   }
 
