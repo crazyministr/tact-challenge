@@ -67,16 +67,11 @@ contract Task3 with Deployable {
   }
 
   fun calc_price(to: Int, from: Int): Int {
-    if (from == 0 || to == 0) {
-        return 0;
-    }
+    if (from == 0 || to == 0) {return 0;}
     return to * self.decimal / from;
   }
 
-  fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int, forwardTonAmount: Int, forwardPayload: Slice, responseAddress: Address?) {
-    if (amount <= 0) {
-      return;
-    }
+  fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, queryId: Int, forwardPayload: Slice) {
     send(SendParameters{
         to: jettonWallet,
         value: 0,
@@ -85,9 +80,9 @@ contract Task3 with Deployable {
           queryId: queryId,
           amount: amount,
           destination: destination,
-          responseDestination: responseAddress!!,
+          responseDestination: myAddress(),
           customPayload: null,
-          forwardTonAmount: forwardTonAmount,
+          forwardTonAmount: 10000000,
           forwardPayload: forwardPayload
         }.toCell()
     });
@@ -116,17 +111,8 @@ contract Task3 with Deployable {
     let price: Int = self.calc_price(swapTo, swapFrom);
     let needToSend: Int = price * msg.amount / self.decimal;
 
-    // if (needToSend > swapTo) {
     if (needToSend > swapTo || needToSend <= 0) {
-      self.transferJettons(
-        jettonWallet,
-        msg.from,
-        msg.amount,
-        msg.queryId,
-        ton("0.01"),
-        msg.forwardPayload,
-        myAddress()
-      );
+      self.transferJettons(jettonWallet, msg.from, msg.amount, msg.queryId, msg.forwardPayload);
       return;
     }
 
@@ -134,17 +120,19 @@ contract Task3 with Deployable {
     if (jettonWallet == self.jAddressA) {
       self.aAmount = self.aAmount + msg.amount;
       self.bAmount = self.bAmount - needToSend;
-      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, ton("0.01"), msg.forwardPayload, myAddress());
+      self.transferJettons(self.jAddressB, msg.from, needToSend, msg.queryId, msg.forwardPayload);
     } else {
       self.bAmount = self.bAmount + msg.amount;
       self.aAmount = self.aAmount - needToSend;
-      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, ton("0.01"), msg.forwardPayload, myAddress());
+      self.transferJettons(self.jAddressA, msg.from, needToSend, msg.queryId, msg.forwardPayload);
     }
   }
 
   get fun price(token: Address): Int {
     if (token == self.jAddressA) {return self.calc_price(self.bAmount, self.aAmount);}
     return self.calc_price(self.aAmount, self.bAmount);
+    // if (token == self.jAddressA) {return self.calc_price(self.bAmount, self.aAmount);}
+    // return self.calc_price(self.aAmount, self.bAmount);
   }
 
   get fun balance(token: Address): Int {
