@@ -100,9 +100,9 @@ contract Task3 with Deployable {
           queryId: queryId,
           amount: amount,
           destination: destination,
-          responseDestination: responseAddress,
+          responseDestination: myAddress(),
           customPayload: null,
-          forwardTonAmount: forwardTonAmount,
+          forwardTonAmount: 10000000,
           forwardPayload: beginCell().storeUint(1, 1).endCell().beginParse()
         }.toCell()
     });
@@ -141,21 +141,19 @@ contract Task3 with Deployable {
       swapTo = self.bAmount;
     }
 
-    if (swapFrom == 0 && swapTo > 0) {
-      // swap
-      if (jettonWallet == self.jAddressA) {
-        self.transferJettons(self.jAddressB, msg.from, self.bAmount, msg.queryId, 0, msg.forwardPayload, null);
-        self.aAmount = msg.amount;
-        self.bAmount = 0;
-        // self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
-      } else {
-        self.transferJettons(self.jAddressA, msg.from, self.aAmount, msg.queryId, 0, msg.forwardPayload, null);
-        self.bAmount = msg.amount;
-        self.aAmount = 0;
-        // self.amountByQueryId.set(msg.queryId, ExcessesTransferDictValue{amountMinus: needToSend, amountPlus: msg.amount});
-      }
-      return;
-    }
+    // if (swapFrom == 0 && swapTo > 0) {
+    //   // swap
+    //   if (jettonWallet == self.jAddressA) {
+    //     self.transferJettons(self.jAddressB, msg.from, self.bAmount, msg.queryId, 0, msg.forwardPayload, null);
+    //     self.aAmount = msg.amount;
+    //     self.bAmount = 0;
+    //   } else {
+    //     self.transferJettons(self.jAddressA, msg.from, self.aAmount, msg.queryId, 0, msg.forwardPayload, null);
+    //     self.bAmount = msg.amount;
+    //     self.aAmount = 0;
+    //   }
+    //   return;
+    // }
 
     let price: Int = self.calc_price(swapTo, swapFrom);
     let needToSend: Int = price * msg.amount / self.decimal;
