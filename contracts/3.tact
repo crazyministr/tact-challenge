@@ -86,7 +86,7 @@ contract Task3 with Deployable {
           responseDestination: destination,
           customPayload: null,
           forwardTonAmount: forwardTonAmount,
-          forwardPayload: beginCell().storeUint(0, 1).endCell().beginParse()
+          forwardPayload: beginCell().storeUint(13, 6).endCell().beginParse()
         }.toCell()
     });
   }
