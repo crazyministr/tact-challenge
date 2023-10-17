@@ -81,7 +81,7 @@ contract Task5 with Deployable {
     self.nftCollection = emptyMap();
   }
 
-  fun send_nft(nftAddress: Address, toAddress: Address, queryId: Int, amount: Int, mode: Int) {
+  fun send_nft(nftAddress: Address, toAddress: Address, queryId: Int, amount: Int, mode: Int, forwardPayload: Slice) {
     send(SendParameters{
       to: nftAddress,
       value: amount,
@@ -92,7 +92,7 @@ contract Task5 with Deployable {
         responseDestination: toAddress,
         customPayload: null,
         forwardAmount: 0,
-        forwardPayload: emptySlice()
+        forwardPayload: forwardPayload
       }.toCell()
     });
   }
@@ -108,7 +108,7 @@ contract Task5 with Deployable {
     let msgValue: Int = context().value;
     if (msgValue < 2100000000) {  // 2.1 TON
       nativeReserve(myBalance() - msgValue, 0);
-      self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
+      self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128, msg.forwardPayload);
       return;
     }
 
@@ -124,7 +124,7 @@ contract Task5 with Deployable {
       self.nftCollection.set(self.nftCnt, null);
     }
 
-    self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
+    self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128, msg.forwardPayload);
   }
 
   receive(msg: AdminWithdrawalProfit) {
@@ -148,9 +148,10 @@ contract Task5 with Deployable {
     require(context().value >= minTons, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
 
+    let forwardPayload: Slice = emptySlice();
     repeat (min(self.nftCnt, 100)) {
       self.nftCnt = self.nftCnt - 1;
-      self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
+      self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0, forwardPayload);  // 0.01 TON
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
@@ -165,9 +166,10 @@ contract Task5 with Deployable {
   }
 
   receive(msg: KeepWithdrawalAllNFTs) {
+    let forwardPayload: Slice = emptySlice();
     repeat (min(self.nftCnt, 100)) {
       self.nftCnt = self.nftCnt - 1;
-      self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
+      self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0, forwardPayload);  // 0.01 TON
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
