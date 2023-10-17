@@ -98,7 +98,7 @@ contract Task5 with Deployable {
   }
 
   receive(msg: OwnershipAssigned) {
-    let nftAddress: Address = sender();
+    let nftAddress: Address = context().sender;
     let prevOwner: Address = msg.prevOwner;
     if (prevOwner == self.owner) {
       self.nftCollection.set(self.nftCnt, nftAddress);
@@ -128,7 +128,7 @@ contract Task5 with Deployable {
   }
 
   receive(msg: AdminWithdrawalProfit) {
-    require(sender() == self.owner, "Insufficient privelegies");
+    require(context().sender == self.owner, "Insufficient privelegies");
     // nativeReserve(self.MinTonForStorage, 0);
     send(SendParameters{
       to: self.owner,
@@ -146,7 +146,7 @@ contract Task5 with Deployable {
   receive(msg: AdminWithdrawalAllNFTs) {
     let minTons: Int = 1000000000 + self.nftCnt * 80000000;
     require(context().value >= minTons, "Insufficent funds");
-    require(sender() == self.owner, "Invalid sender");
+    require(context().sender == self.owner, "Invalid sender");
 
     repeat (min(self.nftCnt, 150)) {
       self.nftCnt = self.nftCnt - 1;
