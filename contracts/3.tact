@@ -82,23 +82,23 @@ contract Task3 with Deployable {
 
   receive(msg: TokenNotification) {
     let jettonWallet: Address = sender();
-    let isjettonA: Bool = jettonWallet == self.jAddressA;
-    require(isjettonA || (jettonWallet == self.jAddressB), "Invalid jetton wallet");
+    let isjettonB: Bool = jettonWallet == self.jAddressB;
+    require(isjettonB || (jettonWallet == self.jAddressA), "Invalid jetton wallet");
 
     if (self.owner == msg.from) {
-      if (isjettonA) {
-        self.aAmount = self.aAmount + msg.amount;
+      if (isjettonB) {
+        self.bAmount = self.bAmount + msg.amount;
         return;
       }
-      self.bAmount = self.bAmount + msg.amount;
+      self.aAmount = self.aAmount + msg.amount;
       return;
     }
 
-    let swapFrom: Int = self.bAmount;
-    let swapTo: Int = self.aAmount;
-    if (isjettonA) {
-      swapFrom = self.aAmount;
-      swapTo = self.bAmount;
+    let swapFrom: Int = self.aAmount;
+    let swapTo: Int = self.bAmount;
+    if (isjettonB) {
+      swapFrom = self.bAmount;
+      swapTo = self.aAmount;
     }
 
     let price: Int = self.calc_price(swapTo, swapFrom);
@@ -126,23 +126,23 @@ contract Task3 with Deployable {
     }
 
     // swap
-    if (isjettonA) {
-      self.aAmount = self.aAmount + msg.amount;
-      self.bAmount = self.bAmount - needToSend;
-      // self.transferJettons(self.jAddressB, msg.from, needToSend, msg.forwardPayload);
+    if (isjettonB) {
+      self.bAmount = self.bAmount + msg.amount;
+      self.aAmount = self.aAmount - needToSend;
+      // self.transferJettons(self.jAddressA, msg.from, needToSend, msg.forwardPayload);
       send(SendParameters{
-        to: self.jAddressB, value: 0, mode: SendRemainingValue,
+        to: self.jAddressA, value: 0, mode: SendRemainingValue,
         body: TokenTransfer{
           queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
         }.toCell()
       });
       return;
     }
-    self.bAmount = self.bAmount + msg.amount;
-    self.aAmount = self.aAmount - needToSend;
-    // self.transferJettons(self.jAddressA, msg.from, needToSend, msg.forwardPayload);
+    self.aAmount = self.aAmount + msg.amount;
+    self.bAmount = self.bAmount - needToSend;
+    // self.transferJettons(self.jAddressB, msg.from, needToSend, msg.forwardPayload);
     send(SendParameters{
-      to: self.jAddressA, value: 0, mode: SendRemainingValue,
+      to: self.jAddressB, value: 0, mode: SendRemainingValue,
       body: TokenTransfer{
         queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
       }.toCell()
