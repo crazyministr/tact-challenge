@@ -51,12 +51,14 @@ contract Task4 with Deployable {
   time: Int as uint32;
   owner: Address?;
   nft_address: Address?;
+  es: Slice;
 
   init(seed: Int) {
     self.seed = seed;
     self.time = 0;
     self.owner = null;
     self.nft_address = null;
+    self.es = emptySlice();
   }
 
   receive(msg: OwnershipAssigned) {
@@ -76,7 +78,7 @@ contract Task4 with Deployable {
         responseDestination: msg.prevOwner,
         customPayload: null,
         forwardAmount: 0,
-        forwardPayload: msg.forwardPayload
+        forwardPayload: self.es
       }.toCell()
     });
   }
@@ -107,7 +109,7 @@ contract Task4 with Deployable {
         responseDestination: sender(),
         customPayload: null,
         forwardAmount: 0,
-        forwardPayload: emptySlice()
+        forwardPayload: self.es
       }.toCell()
     });
     self.owner = null;
