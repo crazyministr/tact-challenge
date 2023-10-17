@@ -73,7 +73,7 @@ contract Task5 with Deployable {
   owner: Address;
   nftCollection: map<Int as uint16, Address>;
   nftCnt: Int as uint16 = 0;
-  const MinTonForStorage: Int = 100000000;  // ton("0.1");
+  // const MinTonForStorage: Int = 100000000;  // ton("0.1");
 
   init(seed: Int, owner: Address) {
     self.owner = owner;
@@ -81,24 +81,24 @@ contract Task5 with Deployable {
     self.nftCollection = emptyMap();
   }
 
-  fun send_nft(nftAddress: Address, toAddress: Address, queryId: Int, amount: Int, mode: Int) {
-    send(SendParameters{
-      to: nftAddress,
-      value: amount,
-      mode: mode,
-      body: Transfer{
-        queryId: queryId,
-        newOwner: toAddress,
-        responseDestination: toAddress,
-        customPayload: null,
-        forwardAmount: 0,
-        forwardPayload: emptySlice()
-      }.toCell()
-    });
-  }
+  // fun send_nft(nftAddress: Address, toAddress: Address, queryId: Int, amount: Int, mode: Int) {
+  //   send(SendParameters{
+  //     to: nftAddress,
+  //     value: amount,
+  //     mode: mode,
+  //     body: Transfer{
+  //       queryId: queryId,
+  //       newOwner: toAddress,
+  //       responseDestination: toAddress,
+  //       customPayload: null,
+  //       forwardAmount: 0,
+  //       forwardPayload: emptySlice()
+  //     }.toCell()
+  //   });
+  // }
 
   receive(msg: OwnershipAssigned) {
-    let nftAddress: Address = context().sender;
+    let nftAddress: Address = sender();
     let prevOwner: Address = msg.prevOwner;
     if (prevOwner == self.owner) {
       self.nftCollection.set(self.nftCnt, nftAddress);
@@ -108,7 +108,12 @@ contract Task5 with Deployable {
     let msgValue: Int = context().value;
     if (msgValue < 2100000000) {  // 2.1 TON
       nativeReserve(myBalance() - msgValue, 0);
-      self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
+      // self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
+      send(SendParameters{
+        to: nftAddress, value: 0, mode: 128,
+        body: Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
+      });
+
       return;
     }
 
@@ -124,16 +129,20 @@ contract Task5 with Deployable {
       self.nftCollection.set(self.nftCnt, null);
     }
 
-    self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
+    // self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
+    send(SendParameters{
+      to: nftAddress, value: 0, mode: 128,
+      body: Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
+    });
   }
 
   receive(msg: AdminWithdrawalProfit) {
-    require(context().sender == self.owner, "Insufficient privelegies");
+    require(sender() == self.owner, "Insufficient privelegies");
     // nativeReserve(self.MinTonForStorage, 0);
     send(SendParameters{
       to: self.owner,
       // bounce: true,
-      value: myBalance() - context().value - self.MinTonForStorage,
+      value: myBalance() - context().value - 100000000,
       mode: 66,  // SendRemainingValue + SendIgnoreErrors,
       // value: 0,
       // mode: SendRemainingBalance,
@@ -146,17 +155,19 @@ contract Task5 with Deployable {
   receive(msg: AdminWithdrawalAllNFTs) {
     let minTons: Int = 1000000000 + self.nftCnt * 80000000;
     require(context().value >= minTons, "Insufficent funds");
-    require(context().sender == self.owner, "Invalid sender");
+    require(sender() == self.owner, "Invalid sender");
 
     repeat (min(self.nftCnt, 150)) {
       self.nftCnt = self.nftCnt - 1;
-      self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
+      // self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
+      send(SendParameters{
+        to: self.nftCollection.get(self.nftCnt)!!, value: 10000000, mode: 0,
+        body: Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
+      });
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
-        to: myAddress(),
-        value: 0,
-        mode: 64,
+        to: myAddress(), value: 0, mode: 64,
         body: KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
       });
     } else {
@@ -167,13 +178,15 @@ contract Task5 with Deployable {
   receive(msg: KeepWithdrawalAllNFTs) {
     repeat (min(self.nftCnt, 150)) {
       self.nftCnt = self.nftCnt - 1;
-      self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
+      // self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
+      send(SendParameters{
+        to: self.nftCollection.get(self.nftCnt)!!, value: 10000000, mode: 0,
+        body: Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
+      });
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
-        to: myAddress(),
-        value: 0,
-        mode: 64,
+        to: myAddress(), value: 0, mode: 64,
         body: KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
       });
     } else {
@@ -182,7 +195,7 @@ contract Task5 with Deployable {
   }
 
   get fun profit(): Int {
-    return myBalance() - self.MinTonForStorage;
+    return myBalance() - 100000000;  // -0.1 TON
   }
 
   get fun nfts(): map<Int as uint16, Address> {
