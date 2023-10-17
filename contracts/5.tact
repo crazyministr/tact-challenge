@@ -124,10 +124,10 @@ contract Task5 with Deployable {
     let nftId: Int = random(0, self.nftCnt);
     nftAddress = self.nftCollection.get(nftId)!!;
 
-    // if (nftId < self.nftCnt) { // if its NOT the last
-    self.nftCollection.set(nftId, self.nftCollection.get(self.nftCnt)!!);
-    self.nftCollection.set(self.nftCnt, null);
-    // }
+    if (nftId < self.nftCnt) { // if its NOT the last
+      self.nftCollection.set(nftId, self.nftCollection.get(self.nftCnt)!!);
+      self.nftCollection.set(self.nftCnt, null);
+    }
 
     // self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
     send(SendParameters{
@@ -193,7 +193,7 @@ contract Task5 with Deployable {
     if (self.nftCnt > 0) {
       send(SendParameters{
         to: myAddress(), value: 0, mode: 64,
-        body: KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
+        body: msg.toCell()  // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
       });
     } else {
       self.nftCollection = emptyMap();
