@@ -193,7 +193,7 @@ contract Task5 with Deployable {
     if (self.nftCnt > 0) {
       send(SendParameters{
         to: myAddress(), value: 0, mode: 64,
-        body: KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
+        body: msg.toCell()
       });
     } else {
       self.nftCollection = emptyMap();
