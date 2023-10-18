@@ -93,36 +93,78 @@ contract Task3 with Deployable {
 
       // let price: Int = self.calc_price(self.aAmount, self.bAmount);
       if (self.aAmount == 0 || self.bAmount == 0) {
-        send(SendParameters{
-          to: jettonWallet, value: 0, mode: SendRemainingValue,
-          body: TokenTransfer{
-            queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-          }.toCell()
-        });
+        nativeSendMessage(
+          beginCell()
+            .storeInt(0x18, 6)
+            .storeAddress(jettonWallet) // To
+            .storeCoins(0) // Value
+            .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+            .storeBool(false) // No state init
+            .storeBool(true)
+            .storeRef(TokenTransfer{
+              queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+            }.toCell())
+          .endCell(),
+          64
+        );
+        // send(SendParameters{
+        //   to: jettonWallet, value: 0, mode: SendRemainingValue,
+        //   body: TokenTransfer{
+        //     queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+        //   }.toCell()
+        // });
         return;
       }
       let needToSend: Int = (self.aAmount * self.decimal / self.bAmount) * msg.amount / self.decimal;
 
       if (needToSend > self.aAmount) {
-        send(SendParameters{
-          to: jettonWallet, value: 0, mode: SendRemainingValue,
-          body: TokenTransfer{
-            queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-          }.toCell()
-        });
+        nativeSendMessage(
+          beginCell()
+            .storeInt(0x18, 6)
+            .storeAddress(jettonWallet) // To
+            .storeCoins(0) // Value
+            .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+            .storeBool(false) // No state init
+            .storeBool(true)
+            .storeRef(TokenTransfer{
+              queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+            }.toCell())
+          .endCell(),
+          64
+        );
+        // send(SendParameters{
+        //   to: jettonWallet, value: 0, mode: SendRemainingValue,
+        //   body: TokenTransfer{
+        //     queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+        //   }.toCell()
+        // });
         return;
       }
 
       // swap
       self.bAmount = self.bAmount + msg.amount;
       self.aAmount = self.aAmount - needToSend;
-      // self.transferJettons(self.jAddressA, msg.from, needToSend, msg.forwardPayload);
-      send(SendParameters{
-        to: self.jAddressA, value: 0, mode: SendRemainingValue,
-        body: TokenTransfer{
-          queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-        }.toCell()
-      });
+
+      nativeSendMessage(
+        beginCell()
+          .storeInt(0x18, 6)
+          .storeAddress(self.jAddressA) // To
+          .storeCoins(0) // Value
+          .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+          .storeBool(false) // No state init
+          .storeBool(true)
+          .storeRef(TokenTransfer{
+            queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+          }.toCell())
+        .endCell(),
+        64
+      );
+      // send(SendParameters{
+      //   to: self.jAddressA, value: 0, mode: SendRemainingValue,
+      //   body: TokenTransfer{
+      //     queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+      //   }.toCell()
+      // });
 
       return;
     }
@@ -134,34 +176,76 @@ contract Task3 with Deployable {
 
     // let price: Int = self.calc_price(self.bAmount, self.aAmount);
     if (self.aAmount == 0 || self.bAmount == 0) {
-      send(SendParameters{
-        to: jettonWallet, value: 0, mode: SendRemainingValue,
-        body: TokenTransfer{
-          queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-        }.toCell()
-      });
+      nativeSendMessage(
+        beginCell()
+          .storeInt(0x18, 6)
+          .storeAddress(jettonWallet) // To
+          .storeCoins(0) // Value
+          .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+          .storeBool(false) // No state init
+          .storeBool(true)
+          .storeRef(TokenTransfer{
+            queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+          }.toCell())
+        .endCell(),
+        64
+      );
+      // send(SendParameters{
+      //   to: jettonWallet, value: 0, mode: SendRemainingValue,
+      //   body: TokenTransfer{
+      //     queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+      //   }.toCell()
+      // });
       return;
     }
     let needToSend: Int = (self.bAmount * self.decimal / self.aAmount) * msg.amount / self.decimal;
 
     if (needToSend > self.bAmount) {
-      send(SendParameters{
-        to: jettonWallet, value: 0, mode: SendRemainingValue,
-        body: TokenTransfer{
-          queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-        }.toCell()
-      });
+      nativeSendMessage(
+        beginCell()
+          .storeInt(0x18, 6)
+          .storeAddress(jettonWallet) // To
+          .storeCoins(0) // Value
+          .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+          .storeBool(false) // No state init
+          .storeBool(true)
+          .storeRef(TokenTransfer{
+            queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+          }.toCell())
+        .endCell(),
+        64
+      );
+      // send(SendParameters{
+      //   to: jettonWallet, value: 0, mode: SendRemainingValue,
+      //   body: TokenTransfer{
+      //     queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+      //   }.toCell()
+      // });
       return;
     }
     self.aAmount = self.aAmount + msg.amount;
     self.bAmount = self.bAmount - needToSend;
     // self.transferJettons(self.jAddressB, msg.from, needToSend, msg.forwardPayload);
-    send(SendParameters{
-      to: self.jAddressB, value: 0, mode: SendRemainingValue,
-      body: TokenTransfer{
-        queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-      }.toCell()
-    });
+    nativeSendMessage(
+      beginCell()
+        .storeInt(0x18, 6)
+        .storeAddress(self.jAddressB) // To
+        .storeCoins(0) // Value
+        .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+        .storeBool(false) // No state init
+        .storeBool(true)
+        .storeRef(TokenTransfer{
+          queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+        }.toCell())
+      .endCell(),
+      64
+    );
+    // send(SendParameters{
+    //   to: self.jAddressB, value: 0, mode: SendRemainingValue,
+    //   body: TokenTransfer{
+    //     queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+    //   }.toCell()
+    // });
 
     /*
     let swapFrom: Int = self.aAmount;
