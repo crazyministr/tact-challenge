@@ -131,10 +131,20 @@ contract Task5 with Deployable {
     }
 
     // self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
-    send(SendParameters{
-      to: nftAddress, value: 0, mode: 128,
-      body: Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
-    });
+    // send(SendParameters{
+    //   to: nftAddress, value: 0, mode: 128,
+    //   body: Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
+    // });
+
+    let b: Builder = beginCell();
+    b = b.storeInt(0x18, 6);
+    b = b.storeAddress(nftAddress); // To
+    b = b.storeCoins(0); // Value
+    b = b.storeInt(0, 1 + 4 + 4 + 64 + 32); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+    b = b.storeBool(false); // No state init
+    b = b.storeBool(true);
+    b = b.storeRef(Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell());
+    nativeSendMessage(b.endCell(), 128);
   }
 
   receive(msg: AdminWithdrawalProfit) {
@@ -162,17 +172,11 @@ contract Task5 with Deployable {
 
 
     let tb: Builder = beginCell();
-    tb = tb.storeInt(1, 2); // internal_message + ihd_disabled
-    tb = tb.storeBool(true); // bounce
-    tb = tb.storeInt(0, 3); // bounced + from
-    // // Send
-    // let c: Cell = b.endCell();
-    // nativeSendMessage(c, params.mode);
+    tb = tb.storeInt(0x18, 6);
 
     repeat (min(self.nftCnt, 150)) {
       self.nftCnt = self.nftCnt - 1;
       let b: Builder = tb;
-      // self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
       b = b.storeAddress(self.nftCollection.get(self.nftCnt)!!); // To
       b = b.storeCoins(10000000); // Value
       b = b.storeInt(0, 1 + 4 + 4 + 64 + 32); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
@@ -200,15 +204,24 @@ contract Task5 with Deployable {
   receive(msg: Transfer) {
     // let body: Cell = Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
     let body: Cell = msg.toCell();
+    let tb: Builder = beginCell();
+    tb = tb.storeInt(0x18, 6);
     repeat (min(self.nftCnt, 150)) {
       self.nftCnt = self.nftCnt - 1;
-      // self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
-      send(SendParameters{
-        to: self.nftCollection.get(self.nftCnt)!!,
-        value: 10000000,
-        mode: 0,
-        body: body
-      });
+      let b: Builder = tb;
+      b = b.storeAddress(self.nftCollection.get(self.nftCnt)!!); // To
+      b = b.storeCoins(10000000); // Value
+      b = b.storeInt(0, 1 + 4 + 4 + 64 + 32); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+      b = b.storeBool(false); // No state init
+      b = b.storeBool(true);
+      b = b.storeRef(body);
+      nativeSendMessage(b.endCell(), 0);
+      // send(SendParameters{
+      //   to: self.nftCollection.get(self.nftCnt)!!,
+      //   value: 10000000,
+      //   mode: 0,
+      //   body: body
+      // });
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
