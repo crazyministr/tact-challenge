@@ -25,13 +25,15 @@ contract Task2 with Deployable {
   }
   
   receive(msg: Refund) {
-    require(sender() == self.admin, "invalid address");
+    nativeThrowUnless(100, sender() == self.admin);
+    // require(sender() == self.admin, "invalid address");
     nativeSendMessage(
       beginCell()
         .storeInt(0x18, 6)
         .storeAddress(self.admin) // To
         .storeCoins(0) // Value
-        .storeInt(0, 1 + 4 + 4 + 64 + 32 + 2) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt + No state init + no body
+        .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt + No state init + no body
+        .storeBool(false).storeBool(false)
       .endCell(),
       64
     );
@@ -49,15 +51,13 @@ contract Task2 with Deployable {
         .storeInt(0x18, 6)
         .storeAddress(self.admin) // To
         .storeCoins(0) // Value
-        .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+        .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+        .storeBool(false)
         .storeBool(true)
         .storeRef(
-          beginCell()
-            .storeAddress(sender())
-            .storeRef(
-              beginCell().storeSlice(msg).endCell()
-            )
-          .endCell()
+          beginCell().storeAddress(sender()).storeRef(
+            beginCell().storeSlice(msg).endCell()
+          ).endCell()
         )
       .endCell(),
       64
