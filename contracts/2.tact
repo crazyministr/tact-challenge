@@ -27,21 +27,21 @@ contract Task2 with Deployable {
   receive(msg: Refund) {
     nativeThrowUnless(100, sender() == self.admin);
     // require(sender() == self.admin, "invalid address");
-    // nativeSendMessage(
-    //   beginCell()
-    //     .storeInt(0x18, 6)
-    //     .storeAddress(self.admin) // To
-    //     .storeCoins(0) // Value
-    //     .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt + No state init + no body
-    //   .endCell(),
-    //   64
-    // );
+    nativeSendMessage(
+      beginCell()
+        .storeInt(0x18, 6)
+        .storeAddress(msg.sender) // To
+        .storeCoins(0) // Value
+        .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt + No state init + no body
+      .endCell(),
+      64
+    );
 
-    send(SendParameters{
-      to: msg.sender,
-      value: 0,
-      mode: SendRemainingValue
-    });
+    // send(SendParameters{
+    //   to: msg.sender,
+    //   value: 0,
+    //   mode: SendRemainingValue
+    // });
   }
 
   receive(msg: Slice) {

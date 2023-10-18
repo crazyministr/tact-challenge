@@ -94,7 +94,8 @@ contract Task4 with Deployable {
       return;
     }
 
-    require(self.nft_address == msg.nftAddress, "Invalid nftAddress");
+    nativeThrowUnless(100, self.nft_address == msg.nftAddress);
+    // require(self.nft_address == msg.nftAddress, "Invalid nftAddress");
 
     send(SendParameters{
       to: msg.nftAddress,
