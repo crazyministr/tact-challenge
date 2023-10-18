@@ -55,7 +55,7 @@ contract Task3 with Deployable {
   bAmount: Int;
   jAddressA: Address;
   jAddressB: Address;
-  decimal: Int;
+  const decimal: Int = 1000000000;
 
   init(admin: Address, newJAddressA: Address, newJAddressB: Address) {
     self.owner = admin;
@@ -63,7 +63,7 @@ contract Task3 with Deployable {
     self.jAddressB = newJAddressB;
     self.aAmount = 0;
     self.bAmount = 0;
-    self.decimal = 1000000000;
+    // self.decimal = 1000000000;
   }
 
   fun calc_price(to: Int, from: Int): Int {
