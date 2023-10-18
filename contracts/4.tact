@@ -66,11 +66,8 @@ contract Task4 with Deployable {
       self.nft_address = sender();
       return;
     }
-    send(SendParameters{
-      to: sender(),
-      value: 0,
-      mode: 64,
-      body: Transfer{
+    nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(sender()).storeCoins(0).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(
+      Transfer{
         queryId: msg.queryId,
         newOwner: msg.prevOwner,
         responseDestination: msg.prevOwner,
@@ -78,30 +75,44 @@ contract Task4 with Deployable {
         forwardAmount: 0,
         forwardPayload: emptySlice()
       }.toCell()
-    });
+    ).endCell(), 64);
+
+    // send(SendParameters{
+    //   to: sender(),
+    //   value: 0,
+    //   mode: 64,
+    //   body: Transfer{
+    //     queryId: msg.queryId,
+    //     newOwner: msg.prevOwner,
+    //     responseDestination: msg.prevOwner,
+    //     customPayload: null,
+    //     forwardAmount: 0,
+    //     forwardPayload: emptySlice()
+    //   }.toCell()
+    // });
   }
 
   receive(msg: NftWithdrawal) {
     require(sender() == self.owner, "Invalid sender");
 
     if (now() < self.time) {
-      send(SendParameters{
-          to: sender(),
-          value: 0,
-          mode: 64,
-          body: "NFT is still locked".asComment()
-      });
+      nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(sender()).storeCoins(0).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(
+        "NFT is still locked".asComment()
+      ).endCell(), 64);
+      // send(SendParameters{
+      //     to: sender(),
+      //     value: 0,
+      //     mode: 64,
+      //     body: "NFT is still locked".asComment()
+      // });
       return;
     }
 
     nativeThrowUnless(100, self.nft_address == msg.nftAddress);
     // require(self.nft_address == msg.nftAddress, "Invalid nftAddress");
 
-    send(SendParameters{
-      to: msg.nftAddress,
-      value: 0,
-      mode: 128,
-      body: Transfer{
+    nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(msg.nftAddress).storeCoins(0).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(
+      Transfer{
         queryId: msg.queryId,
         newOwner: sender(),
         responseDestination: sender(),
@@ -109,7 +120,20 @@ contract Task4 with Deployable {
         forwardAmount: 0,
         forwardPayload: emptySlice()
       }.toCell()
-    });
+    ).endCell(), 128);
+    // send(SendParameters{
+    //   to: msg.nftAddress,
+    //   value: 0,
+    //   mode: 128,
+    //   body: Transfer{
+    //     queryId: msg.queryId,
+    //     newOwner: sender(),
+    //     responseDestination: sender(),
+    //     customPayload: null,
+    //     forwardAmount: 0,
+    //     forwardPayload: emptySlice()
+    //   }.toCell()
+    // });
     self.owner = null;
     self.nft_address = null;
   }
