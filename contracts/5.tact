@@ -45,9 +45,9 @@ message AdminWithdrawalAllNFTs {
   queryId: Int as uint64;
 }
 
-// message(0x1313) KeepWithdrawalAllNFTs {
-//   queryId: Int as uint64;
-// }
+message(0x1313) KeepWithdrawalAllNFTs {
+  queryId: Int as uint64;
+}
 
 message AdminFetchProfit {
   queryId: Int as uint64;
@@ -76,8 +76,8 @@ contract Task5 with Deployable {
   // const MinTonForStorage: Int = 100000000;  // ton("0.1");
 
   init(seed: Int, owner: Address) {
-    self.owner = owner;
     self.seed = seed; // needed to deploy multiple smart contracts copies from one admin address
+    self.owner = owner;
     self.nftCollection = emptyMap();
   }
 
@@ -170,16 +170,17 @@ contract Task5 with Deployable {
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
-        to: myAddress(), value: 0, mode: 64
-        // body: KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
+        to: myAddress(), value: 0, mode: 64,
+        body: body // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
       });
     } else {
       self.nftCollection = emptyMap();
     }
   }
 
-  receive(msg: Slice) {  // KeepWithdrawalAllNFTs
-    let body: Cell = Transfer{ queryId: 0, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
+  receive(msg: Transfer) {
+    // let body: Cell = Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
+    let body: Cell = msg.toCell();
     repeat (min(self.nftCnt, 150)) {
       self.nftCnt = self.nftCnt - 1;
       // self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
@@ -192,8 +193,8 @@ contract Task5 with Deployable {
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
-        to: myAddress(), value: 0, mode: 64
-        // body: msg.toCell()  // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
+        to: myAddress(), value: 0, mode: 64,
+        body: body  // msg.toCell()  // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
       });
     } else {
       self.nftCollection = emptyMap();
