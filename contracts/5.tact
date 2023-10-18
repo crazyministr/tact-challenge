@@ -159,15 +159,33 @@ contract Task5 with Deployable {
     require(sender() == self.owner, "Invalid sender");
 
     let body: Cell = Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
+
+
+    let tb: Builder = beginCell();
+    tb = tb.storeInt(1, 2); // internal_message + ihd_disabled
+    tb = tb.storeBool(true); // bounce
+    tb = tb.storeInt(0, 3); // bounced + from
+    // // Send
+    // let c: Cell = b.endCell();
+    // nativeSendMessage(c, params.mode);
+
     repeat (min(self.nftCnt, 150)) {
       self.nftCnt = self.nftCnt - 1;
+      let b: Builder = tb;
       // self.send_nft(self.nftCollection.get(self.nftCnt)!!, self.owner, msg.queryId, 10000000, 0);  // 0.01 TON
-      send(SendParameters{
-        to: self.nftCollection.get(self.nftCnt)!!,
-        value: 10000000,
-        mode: 0,
-        body: body
-      });
+      b = b.storeAddress(self.nftCollection.get(self.nftCnt)!!); // To
+      b = b.storeCoins(10000000); // Value
+      b = b.storeInt(0, 1 + 4 + 4 + 64 + 32); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+      b = b.storeBool(false); // No state init
+      b = b.storeBool(true);
+      b = b.storeRef(body);
+      nativeSendMessage(b.endCell(), 0);
+      // send(SendParameters{
+      //   to: self.nftCollection.get(self.nftCnt)!!,
+      //   value: 10000000,
+      //   mode: 0,
+      //   body: body
+      // });
     }
     if (self.nftCnt > 0) {
       send(SendParameters{
