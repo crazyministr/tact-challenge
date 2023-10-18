@@ -117,7 +117,8 @@ contract Task5 with Deployable {
       return;
     }
 
-    nativeReserve(myBalance() - msgValue + 2000000000, 0);  // 2 TON
+    // nativeReserve(myBalance() - msgValue + 2000000000, 0);  // 2 TON
+    nativeReserve(2000000000, 4);  // 2 TON
 
     self.nftCollection.set(self.nftCnt, nftAddress);
 
