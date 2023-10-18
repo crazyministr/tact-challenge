@@ -109,10 +109,13 @@ contract Task5 with Deployable {
     if (msgValue < 2100000000) {  // 2.1 TON
       nativeReserve(myBalance() - msgValue, 0);
       // self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
-      send(SendParameters{
-        to: nftAddress, value: 0, mode: 128,
-        body: Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
-      });
+      nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(nftAddress).storeCoins(0).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(
+        Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
+      ).endCell(), 128);
+      // send(SendParameters{
+      //   to: nftAddress, value: 0, mode: 128,
+      //   body: Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
+      // });
 
       return;
     }
@@ -149,6 +152,8 @@ contract Task5 with Deployable {
 
   receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
+    nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(self.owner).storeCoins(myBalance() - context().value - 100000000).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(AdminFetchProfit{ queryId: msg.queryId }.toCell()).endCell(), 64);
+    /*
     // nativeReserve(self.MinTonForStorage, 0);
     send(SendParameters{
       to: self.owner,
@@ -160,7 +165,7 @@ contract Task5 with Deployable {
       body: AdminFetchProfit{
         queryId: msg.queryId
       }.toCell()
-    });
+    });*/
   }
 
   receive(msg: AdminWithdrawalAllNFTs) {
@@ -176,8 +181,8 @@ contract Task5 with Deployable {
 
     repeat (min(self.nftCnt, 150)) {
       self.nftCnt = self.nftCnt - 1;
-      let b: Builder = tb;
-      b = b.storeAddress(self.nftCollection.get(self.nftCnt)!!); // To
+      // let b: Builder = tb;
+      let b: Builder = tb.storeAddress(self.nftCollection.get(self.nftCnt)!!); // To
       b = b.storeCoins(10000000); // Value
       b = b.storeInt(0, 1 + 4 + 4 + 64 + 32); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
       b = b.storeBool(false); // No state init
@@ -192,10 +197,11 @@ contract Task5 with Deployable {
       // });
     }
     if (self.nftCnt > 0) {
-      send(SendParameters{
-        to: myAddress(), value: 0, mode: 64,
-        body: body // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
-      });
+      nativeSendMessage(tb.storeAddress(myAddress()).storeCoins(0).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(body).endCell(), 64);
+      // send(SendParameters{
+      //   to: myAddress(), value: 0, mode: 64,
+      //   body: body // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
+      // });
     } else {
       self.nftCollection = emptyMap();
     }
@@ -224,10 +230,11 @@ contract Task5 with Deployable {
       // });
     }
     if (self.nftCnt > 0) {
-      send(SendParameters{
-        to: myAddress(), value: 0, mode: 64,
-        body: body  // msg.toCell()  // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
-      });
+      nativeSendMessage(tb.storeAddress(myAddress()).storeCoins(0).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(body).endCell(), 64);
+      // send(SendParameters{
+      //   to: myAddress(), value: 0, mode: 64,
+      //   body: body  // msg.toCell()  // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
+      // });
     } else {
       self.nftCollection = emptyMap();
     }
