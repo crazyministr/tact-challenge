@@ -101,9 +101,12 @@ contract Task3 with Deployable {
             .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
             .storeBool(false) // No state init
             .storeBool(true)
-            .storeRef(TokenTransfer{
-              queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-            }.toCell())
+            .storeRef(
+              beginCell().storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+            )
+            // .storeRef(TokenTransfer{
+            //   queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+            // }.toCell())
           .endCell(),
           64
         );
@@ -126,9 +129,12 @@ contract Task3 with Deployable {
             .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
             .storeBool(false) // No state init
             .storeBool(true)
-            .storeRef(TokenTransfer{
-              queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-            }.toCell())
+            .storeRef(
+              beginCell().storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+            )
+            // .storeRef(TokenTransfer{
+            //   queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+            // }.toCell())
           .endCell(),
           64
         );
@@ -153,9 +159,12 @@ contract Task3 with Deployable {
           .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeBool(false) // No state init
           .storeBool(true)
-          .storeRef(TokenTransfer{
-            queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-          }.toCell())
+          .storeRef(
+            beginCell().storeUint(0, 64).storeCoins(needToSend).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+          )
+          // .storeRef(TokenTransfer{
+          //   queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+          // }.toCell())
         .endCell(),
         64
       );
@@ -184,9 +193,12 @@ contract Task3 with Deployable {
           .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeBool(false) // No state init
           .storeBool(true)
-          .storeRef(TokenTransfer{
-            queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-          }.toCell())
+          .storeRef(
+            beginCell().storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+          )
+          // .storeRef(TokenTransfer{
+          //   queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+          // }.toCell())
         .endCell(),
         64
       );
@@ -209,9 +221,12 @@ contract Task3 with Deployable {
           .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeBool(false) // No state init
           .storeBool(true)
-          .storeRef(TokenTransfer{
-            queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-          }.toCell())
+          .storeRef(
+            beginCell().storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+          )
+          // .storeRef(TokenTransfer{
+          //   queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+          // }.toCell())
         .endCell(),
         64
       );
@@ -234,9 +249,12 @@ contract Task3 with Deployable {
         .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
         .storeBool(false) // No state init
         .storeBool(true)
-        .storeRef(TokenTransfer{
-          queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
-        }.toCell())
+        .storeRef(
+          beginCell().storeUint(0, 64).storeCoins(needToSend).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+        )
+        // .storeRef(TokenTransfer{
+        //   queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
+        // }.toCell())
       .endCell(),
       64
     );
