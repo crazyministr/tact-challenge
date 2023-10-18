@@ -66,10 +66,10 @@ contract Task3 with Deployable {
     // self.decimal = 1000000000;
   }
 
-  fun calc_price(to: Int, from: Int): Int {
-    if (from == 0 || to == 0) {return 0;}
-    return to * self.decimal / from;
-  }
+  // fun calc_price(to: Int, from: Int): Int {
+  //   if (from == 0 || to == 0) {return 0;}
+  //   return to * self.decimal / from;
+  // }
 
   // fun transferJettons(jettonWallet: Address, destination: Address, amount: Int, forwardPayload: Slice) {
   //   send(SendParameters{
@@ -91,8 +91,8 @@ contract Task3 with Deployable {
         return;
       }
 
-      let price: Int = self.calc_price(self.aAmount, self.bAmount);
-      if (price == 0) {
+      // let price: Int = self.calc_price(self.aAmount, self.bAmount);
+      if (self.aAmount == 0 || self.bAmount == 0) {
         send(SendParameters{
           to: jettonWallet, value: 0, mode: SendRemainingValue,
           body: TokenTransfer{
@@ -101,7 +101,7 @@ contract Task3 with Deployable {
         });
         return;
       }
-      let needToSend: Int = price * msg.amount / self.decimal;
+      let needToSend: Int = (self.aAmount * self.decimal / self.bAmount) * msg.amount / self.decimal;
 
       if (needToSend > self.aAmount) {
         send(SendParameters{
@@ -132,8 +132,8 @@ contract Task3 with Deployable {
       return;
     }
 
-    let price: Int = self.calc_price(self.bAmount, self.aAmount);
-    if (price == 0) {
+    // let price: Int = self.calc_price(self.bAmount, self.aAmount);
+    if (self.aAmount == 0 || self.bAmount == 0) {
       send(SendParameters{
         to: jettonWallet, value: 0, mode: SendRemainingValue,
         body: TokenTransfer{
@@ -142,7 +142,7 @@ contract Task3 with Deployable {
       });
       return;
     }
-    let needToSend: Int = price * msg.amount / self.decimal;
+    let needToSend: Int = (self.bAmount * self.decimal / self.aAmount) * msg.amount / self.decimal;
 
     if (needToSend > self.bAmount) {
       send(SendParameters{
@@ -221,8 +221,11 @@ contract Task3 with Deployable {
   }
 
   get fun price(token: Address): Int {
-    if (token == self.jAddressA) {return self.calc_price(self.bAmount, self.aAmount);}
-    return self.calc_price(self.aAmount, self.bAmount);
+    if (self.aAmount == 0 || self.bAmount == 0) { return 0; }
+    if (token == self.jAddressA) { return self.bAmount * self.decimal / self.aAmount; }
+    return self.aAmount * self.decimal / self.bAmount;
+    // if (token == self.jAddressA) {return self.calc_price(self.bAmount, self.aAmount);}
+    // return self.calc_price(self.aAmount, self.bAmount);
   }
 
   get fun balance(token: Address): Int {
