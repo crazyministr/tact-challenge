@@ -110,7 +110,8 @@ contract Task5 with Deployable {
       nativeReserve(myBalance() - msgValue, 0);
       // self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
       nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(nftAddress).storeCoins(0).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(
-        Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
+        beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(prevOwner).storeAddress(prevOwner).storeInt(0, 1).storeCoins(0).endCell()
+        // Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
       ).endCell(), 128);
       // send(SendParameters{
       //   to: nftAddress, value: 0, mode: 128,
@@ -151,7 +152,8 @@ contract Task5 with Deployable {
     b = b.storeInt(0, 1 + 4 + 4 + 64 + 32); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
     b = b.storeBool(false); // No state init
     b = b.storeBool(true);
-    b = b.storeRef(Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell());
+    // b = b.storeRef(Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell());
+    b = b.storeRef(beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(prevOwner).storeAddress(prevOwner).storeInt(0, 1).storeCoins(0).endCell());
     nativeSendMessage(b.endCell(), 128);
   }
 
@@ -180,7 +182,8 @@ contract Task5 with Deployable {
     require(context().value >= minTons, "Insufficent funds");
     require(sender() == self.owner, "Invalid sender");
 
-    let body: Cell = Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
+    // let body: Cell = Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
+    let body: Cell = beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(self.owner).storeAddress(self.owner).storeInt(0, 1).storeCoins(0).endCell();
 
     let tb: Builder = beginCell();
     tb = tb.storeInt(0x18, 6);
