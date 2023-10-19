@@ -212,9 +212,9 @@ contract Task5 with Deployable {
     }
   }
 
-  receive(msg: Transfer) {
+  receive(msg: Slice) {
     // let body: Cell = Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
-    let body: Cell = msg.toCell();
+    let body: Cell = msg.asCell();
     let tb: Builder = beginCell();
     tb = tb.storeInt(0x18, 6);
     repeat (min(self.nftCnt, 150)) {
