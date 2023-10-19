@@ -50,9 +50,7 @@ contract Task2 with Deployable {
         .storeInt(0x18, 6)
         .storeAddress(self.admin) // To
         .storeCoins(0) // Value
-        .storeInt(0, 1 + 4 + 4 + 64 + 32) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
-        .storeBool(false)
-        .storeBool(true)
+        .storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
         .storeRef(
           beginCell().storeAddress(sender()).storeRef(
             beginCell().storeSlice(msg).endCell()

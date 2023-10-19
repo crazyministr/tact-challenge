@@ -98,8 +98,7 @@ contract Task3 with Deployable {
             .storeInt(0x18, 6)
             .storeAddress(jettonWallet) // To
             .storeCoins(0) // Value
-            .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
-            .storeBool(true)
+            .storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
             .storeRef(
               beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
             )
@@ -125,8 +124,7 @@ contract Task3 with Deployable {
             .storeInt(0x18, 6)
             .storeAddress(jettonWallet) // To
             .storeCoins(0) // Value
-            .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
-            .storeBool(true)
+            .storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
             .storeRef(
               beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
             )
@@ -154,8 +152,7 @@ contract Task3 with Deployable {
           .storeInt(0x18, 6)
           .storeAddress(self.jAddressA) // To
           .storeCoins(0) // Value
-          .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
-          .storeBool(true)
+          .storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeRef(
             beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(needToSend).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
           )
@@ -187,8 +184,7 @@ contract Task3 with Deployable {
           .storeInt(0x18, 6)
           .storeAddress(jettonWallet) // To
           .storeCoins(0) // Value
-          .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
-          .storeBool(true)
+          .storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeRef(
             beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
           )
@@ -214,8 +210,7 @@ contract Task3 with Deployable {
           .storeInt(0x18, 6)
           .storeAddress(jettonWallet) // To
           .storeCoins(0) // Value
-          .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
-          .storeBool(true)
+          .storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeRef(
             beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
           )
@@ -241,8 +236,7 @@ contract Task3 with Deployable {
         .storeInt(0x18, 6)
         .storeAddress(self.jAddressB) // To
         .storeCoins(0) // Value
-        .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
-        .storeBool(true)
+        .storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
         .storeRef(
           beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(needToSend).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
         )
