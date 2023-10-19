@@ -123,15 +123,20 @@ contract Task5 with Deployable {
     // nativeReserve(myBalance() - msgValue + 2000000000, 0);  // 2 TON
     nativeReserve(2000000000, 4);  // 2 TON
 
-    self.nftCollection.set(self.nftCnt, nftAddress);
-
     let nftId: Int = random(0, self.nftCnt);
-    nftAddress = self.nftCollection.get(nftId)!!;
-
-    if (nftId < self.nftCnt) { // if its NOT the last
-      self.nftCollection.set(nftId, self.nftCollection.get(self.nftCnt)!!);
-      self.nftCollection.set(self.nftCnt, null);
+    if (nftId < self.nftCnt) {
+      nftAddress = self.nftCollection.get(nftId)!!;
+      self.nftCollection.set(nftId, sender());
     }
+    // self.nftCollection.set(self.nftCnt, nftAddress);
+
+    // let nftId: Int = random(0, self.nftCnt);
+    // nftAddress = self.nftCollection.get(nftId)!!;
+
+    // if (nftId < self.nftCnt) { // if its NOT the last
+    //   self.nftCollection.set(nftId, self.nftCollection.get(self.nftCnt)!!);
+    //   self.nftCollection.set(self.nftCnt, null);
+    // }
 
     // self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
     // send(SendParameters{
@@ -152,7 +157,9 @@ contract Task5 with Deployable {
 
   receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
-    nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(self.owner).storeCoins(myBalance() - context().value - 100000000).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(AdminFetchProfit{ queryId: msg.queryId }.toCell()).endCell(), 64);
+    nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(self.owner).storeCoins(myBalance() - context().value - 100000000).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(
+      AdminFetchProfit{ queryId: msg.queryId }.toCell()
+    ).endCell(), 64);
     /*
     // nativeReserve(self.MinTonForStorage, 0);
     send(SendParameters{
@@ -174,7 +181,6 @@ contract Task5 with Deployable {
     require(sender() == self.owner, "Invalid sender");
 
     let body: Cell = Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
-
 
     let tb: Builder = beginCell();
     tb = tb.storeInt(0x18, 6);

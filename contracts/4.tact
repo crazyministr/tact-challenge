@@ -112,15 +112,14 @@ contract Task4 with Deployable {
     // require(self.nft_address == msg.nftAddress, "Invalid nftAddress");
 
     nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(msg.nftAddress).storeCoins(0).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(
-      beginCell().storeUint(msg.queryId, 64).storeAddress(sender()).storeAddress(sender()).storeInt(0, 1).storeCoins(0).endCell()
-      // Transfer{
-      //   queryId: msg.queryId,
-      //   newOwner: sender(),
-      //   responseDestination: sender(),
-      //   customPayload: null,
-      //   forwardAmount: 0,
-      //   forwardPayload: emptySlice()
-      // }.toCell()
+      Transfer{
+        queryId: msg.queryId,
+        newOwner: sender(),
+        responseDestination: sender(),
+        customPayload: null,
+        forwardAmount: 0,
+        forwardPayload: emptySlice()
+      }.toCell()
     ).endCell(), 128);
     // send(SendParameters{
     //   to: msg.nftAddress,
