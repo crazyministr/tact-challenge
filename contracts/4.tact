@@ -67,7 +67,7 @@ contract Task4 with Deployable {
       return;
     }
     nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(sender()).storeCoins(0).storeInt(0, 1 + 4 + 4 + 64 + 32 + 1).storeBool(true).storeRef(
-      beginCell().storeUint(msg.queryId, 64).storeAddress(msg.prevOwner).storeAddress(msg.prevOwner).storeInt(0, 1).storeCoins(0).storeInt(0, 1).endCell()
+      beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(msg.prevOwner).storeAddress(msg.prevOwner).storeInt(0, 1).storeCoins(0).endCell()
       // Transfer{
       //   queryId: msg.queryId,
       //   newOwner: msg.prevOwner,
