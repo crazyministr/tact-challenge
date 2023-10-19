@@ -31,8 +31,7 @@ contract Task2 with Deployable {
       beginCell()
         .storeInt(0x18, 6)
         .storeAddress(msg.sender) // To
-        .storeCoins(0) // Value
-        .storeInt(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt + No state init + no body
+        .storeInt(0, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt + No state init + no body
       .endCell(),
       64
     );
@@ -49,8 +48,7 @@ contract Task2 with Deployable {
       beginCell()
         .storeInt(0x18, 6)
         .storeAddress(self.admin) // To
-        .storeCoins(0) // Value
-        .storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+        .storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
         .storeRef(
           beginCell().storeAddress(sender()).storeRef(
             beginCell().storeSlice(msg).endCell()

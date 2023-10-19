@@ -109,8 +109,8 @@ contract Task5 with Deployable {
     if (msgValue < 2100000000) {  // 2.1 TON
       nativeReserve(myBalance() - msgValue, 0);
       // self.send_nft(nftAddress, prevOwner, msg.queryId, 0, 128);
-      nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(nftAddress).storeCoins(0).storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(
-        beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(prevOwner).storeAddress(prevOwner).storeInt(0, 1).storeCoins(0).endCell()
+      nativeSendMessage(beginCell().storeInt(0x18, 6).storeAddress(nftAddress).storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(
+        beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(prevOwner).storeAddress(prevOwner).storeInt(0, 1 + 4).endCell()
         // Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell()
       ).endCell(), 128);
       // send(SendParameters{
@@ -148,10 +148,9 @@ contract Task5 with Deployable {
     let b: Builder = beginCell();
     b = b.storeInt(0x18, 6);
     b = b.storeAddress(nftAddress); // To
-    b = b.storeCoins(0); // Value
-    b = b.storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
+    b = b.storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
     // b = b.storeRef(Transfer{ queryId: msg.queryId, newOwner: prevOwner, responseDestination: prevOwner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell());
-    b = b.storeRef(beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(prevOwner).storeAddress(prevOwner).storeInt(0, 1).storeCoins(0).endCell());
+    b = b.storeRef(beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(prevOwner).storeAddress(prevOwner).storeInt(0, 1 + 4).endCell());
     nativeSendMessage(b.endCell(), 128);
   }
 
@@ -181,7 +180,7 @@ contract Task5 with Deployable {
     require(sender() == self.owner, "Invalid sender");
 
     // let body: Cell = Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
-    let body: Cell = beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(self.owner).storeAddress(self.owner).storeInt(0, 1).storeCoins(0).endCell();
+    let body: Cell = beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeAddress(self.owner).storeAddress(self.owner).storeInt(0, 1 + 4).endCell();
 
     let tb: Builder = beginCell();
     tb = tb.storeInt(0x18, 6);
@@ -202,7 +201,7 @@ contract Task5 with Deployable {
       // });
     }
     if (self.nftCnt > 0) {
-      nativeSendMessage(tb.storeAddress(myAddress()).storeCoins(0).storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(body).endCell(), 64);
+      nativeSendMessage(tb.storeAddress(myAddress()).storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(body).endCell(), 64);
       // send(SendParameters{
       //   to: myAddress(), value: 0, mode: 64,
       //   body: body // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
@@ -233,7 +232,7 @@ contract Task5 with Deployable {
       // });
     }
     if (self.nftCnt > 0) {
-      nativeSendMessage(tb.storeAddress(myAddress()).storeCoins(0).storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(body).endCell(), 64);
+      nativeSendMessage(tb.storeAddress(myAddress()).storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(body).endCell(), 64);
       // send(SendParameters{
       //   to: myAddress(), value: 0, mode: 64,
       //   body: body  // msg.toCell()  // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()
