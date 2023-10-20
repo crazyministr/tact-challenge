@@ -183,16 +183,14 @@ contract Task5 with Deployable {
     // let body: Cell = Transfer{ queryId: msg.queryId, newOwner: self.owner, responseDestination: self.owner, customPayload: null, forwardAmount: 0, forwardPayload: emptySlice() }.toCell();
     let body: Cell = beginCell().storeUint(0x5fcc3d14, 32).storeUint(msg.queryId, 64).storeSlice(self.owner.asSlice()).storeSlice(self.owner.asSlice()).storeInt(0, 1 + 4).endCell();
 
-    // let tb: Builder = beginCell();
-    // tb = tb.storeInt(0x18, 6);
+    let tb: Builder = beginCell();
+    tb = tb.storeInt(0x18, 6);
 
     repeat (min(self.nftCnt, 150)) {
       self.nftCnt = self.nftCnt - 1;
       // let b: Builder = tb;
       let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
-      let b: Builder = beginCell();
-      b = b.storeInt(0x18, 6);
-      b = b.storeSlice(nftAddress.asSlice());
+      let b: Builder = tb.storeSlice(nftAddress.asSlice());
       b = b.storeCoins(10000000); // Value
       b = b.storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
       b = b.storeRef(body);
@@ -205,7 +203,7 @@ contract Task5 with Deployable {
       // });
     }
     if (self.nftCnt > 0) {
-      nativeSendMessage(beginCell().storeInt(0x18, 6).storeSlice(myAddress().asSlice()).storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(body).endCell(), 64);
+      nativeSendMessage(tb.storeSlice(myAddress().asSlice()).storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(body).endCell(), 64);
       // send(SendParameters{
       //   to: myAddress(), value: 0, mode: 64,
       //   body: body // KeepWithdrawalAllNFTs{ queryId: msg.queryId }.toCell()

@@ -97,7 +97,8 @@ contract Task4 with Deployable {
 
     if (now() < self.time) {
       nativeSendMessage(beginCell().storeInt(0x18, 6).storeSlice(sender().asSlice()).storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(
-        "NFT is still locked".asComment()
+        beginCell().storeSlice("NFT is still locked".asSlice()).endCell()
+        // "NFT is still locked".asComment()
       ).endCell(), 64);
       // send(SendParameters{
       //     to: sender(),
