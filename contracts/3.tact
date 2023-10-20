@@ -96,10 +96,10 @@ contract Task3 with Deployable {
         nativeSendMessage(
           beginCell()
             .storeInt(0x18, 6)
-            .storeAddress(jettonWallet) // To
+            .storeSlice(jettonWallet.asSlice()) // To
             .storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
             .storeRef(
-              beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+              beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeSlice(msg.from.asSlice()).storeSlice(myAddress().asSlice()).storeBool(false).storeCoins(10000000).endCell()
             )
           .endCell(),
           64
@@ -118,10 +118,10 @@ contract Task3 with Deployable {
         nativeSendMessage(
           beginCell()
             .storeInt(0x18, 6)
-            .storeAddress(jettonWallet) // To
+            .storeSlice(jettonWallet.asSlice()) // To
             .storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
             .storeRef(
-              beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+              beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeSlice(msg.from.asSlice()).storeSlice(myAddress().asSlice()).storeBool(false).storeCoins(10000000).endCell()
             )
             // .storeRef(TokenTransfer{
             //   queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
@@ -145,10 +145,10 @@ contract Task3 with Deployable {
       nativeSendMessage(
         beginCell()
           .storeInt(0x18, 6)
-          .storeAddress(self.jAddressA) // To
+          .storeSlice(self.jAddressA.asSlice()) // To
           .storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeRef(
-            beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(needToSend).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+            beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(needToSend).storeSlice(msg.from.asSlice()).storeSlice(myAddress().asSlice()).storeBool(false).storeCoins(10000000).endCell()
           )
           // .storeRef(TokenTransfer{
           //   queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
@@ -176,10 +176,10 @@ contract Task3 with Deployable {
       nativeSendMessage(
         beginCell()
           .storeInt(0x18, 6)
-          .storeAddress(jettonWallet) // To
+          .storeSlice(jettonWallet.asSlice()) // To
           .storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeRef(
-            beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+            beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeSlice(msg.from.asSlice()).storeSlice(myAddress().asSlice()).storeBool(false).storeCoins(10000000).endCell()
           )
           // .storeRef(TokenTransfer{
           //   queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
@@ -201,10 +201,10 @@ contract Task3 with Deployable {
       nativeSendMessage(
         beginCell()
           .storeInt(0x18, 6)
-          .storeAddress(jettonWallet) // To
+          .storeSlice(jettonWallet.asSlice()) // To
           .storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeRef(
-            beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+            beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(msg.amount).storeSlice(msg.from.asSlice()).storeSlice(myAddress().asSlice()).storeBool(false).storeCoins(10000000).endCell()
           )
           // .storeRef(TokenTransfer{
           //   queryId: 0, amount: msg.amount, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
@@ -226,10 +226,10 @@ contract Task3 with Deployable {
     nativeSendMessage(
       beginCell()
         .storeInt(0x18, 6)
-        .storeAddress(self.jAddressB) // To
+        .storeSlice(self.jAddressB.asSlice()) // To
         .storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
         .storeRef(
-          beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(needToSend).storeAddress(msg.from).storeAddress(myAddress()).storeBool(false).storeCoins(10000000).endCell()
+          beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(needToSend).storeSlice(msg.from.asSlice()).storeSlice(myAddress().asSlice()).storeBool(false).storeCoins(10000000).endCell()
         )
         // .storeRef(TokenTransfer{
         //   queryId: 0, amount: needToSend, destination: msg.from, responseDestination: myAddress(), customPayload: null, forwardTonAmount: 10000000, forwardPayload: msg.forwardPayload  // 0.01 TON
