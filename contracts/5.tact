@@ -186,7 +186,7 @@ contract Task5 with Deployable {
     let tb: Builder = beginCell();
     tb = tb.storeInt(0x18, 6);
 
-    repeat (min(self.nftCnt, 150)) {
+    repeat (min(self.nftCnt, 200)) {
       self.nftCnt = self.nftCnt - 1;
       // let b: Builder = tb;
       let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
@@ -219,7 +219,7 @@ contract Task5 with Deployable {
     let body: Cell = msg.asCell();
     let tb: Builder = beginCell();
     tb = tb.storeInt(0x18, 6);
-    repeat (min(self.nftCnt, 150)) {
+    repeat (min(self.nftCnt, 200)) {
       self.nftCnt = self.nftCnt - 1;
       let b: Builder = tb;
       let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
