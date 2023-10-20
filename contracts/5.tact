@@ -191,7 +191,8 @@ contract Task5 with Deployable {
       // let b: Builder = tb;
       let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
       let b: Builder = tb.storeSlice(nftAddress.asSlice());
-      b = b.storeCoins(10000000); // Value
+      b = b.storeUint(60331648, 28);
+      // b = b.storeCoins(10000000); // Value
       b = b.storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
       b = b.storeRef(body);
       nativeSendMessage(b.endCell(), 0);
@@ -223,7 +224,8 @@ contract Task5 with Deployable {
       let b: Builder = tb;
       let nftAddress: Address = self.nftCollection.get(self.nftCnt)!!;
       b = b.storeSlice(nftAddress.asSlice()); // To
-      b = b.storeCoins(10000000); // Value
+      // b = b.storeCoins(10000000); // Value
+      b = b.storeUint(60331648, 28);
       b = b.storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1); // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
       b = b.storeRef(body);
       nativeSendMessage(b.endCell(), 0);
