@@ -55,6 +55,8 @@ contract Task3 with Deployable {
   bAmount: Int;
   jAddressA: Address;
   jAddressB: Address;
+  jAddressAasSlice: Slice;
+  jAddressBasSlice: Slice;
   const decimal: Int = 1000000000;
 
   init(admin: Address, newJAddressA: Address, newJAddressB: Address) {
@@ -64,6 +66,8 @@ contract Task3 with Deployable {
     self.aAmount = 0;
     self.bAmount = 0;
     // self.decimal = 1000000000;
+    self.jAddressAasSlice = self.jAddressA.asSlice();
+    self.jAddressBasSlice = self.jAddressB.asSlice();
   }
 
   // fun calc_price(to: Int, from: Int): Int {
@@ -145,7 +149,7 @@ contract Task3 with Deployable {
       nativeSendMessage(
         beginCell()
           .storeInt(0x18, 6)
-          .storeSlice(self.jAddressA.asSlice()) // To
+          .storeSlice(self.jAddressAasSlice) // To
           .storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
           .storeRef(
             beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(needToSend).storeSlice(msg.from.asSlice()).storeSlice(myAddress().asSlice()).storeUint(60331648, 1 + 28).endCell()
@@ -226,7 +230,7 @@ contract Task3 with Deployable {
     nativeSendMessage(
       beginCell()
         .storeInt(0x18, 6)
-        .storeSlice(self.jAddressB.asSlice()) // To
+        .storeSlice(self.jAddressBasSlice) // To
         .storeInt(1, 4 + 1 + 4 + 4 + 64 + 32 + 1 + 1) // currency_collection + IHR fees + Fwd fees + CreatedLT + CreatedAt
         .storeRef(
           beginCell().storeUint(0xf8a7ea5, 32).storeUint(0, 64).storeCoins(needToSend).storeSlice(msg.from.asSlice()).storeSlice(myAddress().asSlice()).storeUint(60331648, 1 + 28).endCell()
