@@ -157,7 +157,8 @@ contract Task5 with Deployable {
   receive(msg: AdminWithdrawalProfit) {
     require(sender() == self.owner, "Insufficient privelegies");
     nativeSendMessage(beginCell().storeInt(0x18, 6).storeSlice(self.owner.asSlice()).storeCoins(myBalance() - context().value - 100000000).storeInt(1, 1 + 4 + 4 + 64 + 32 + 1 + 1).storeRef(
-      AdminFetchProfit{ queryId: msg.queryId }.toCell()
+      beginCell().storeUint(4255419257, 32).storeUint(msg.queryId, 64).endCell()
+      // AdminFetchProfit{ queryId: msg.queryId }.toCell()
     ).endCell(), 64);
     /*
     // nativeReserve(self.MinTonForStorage, 0);
